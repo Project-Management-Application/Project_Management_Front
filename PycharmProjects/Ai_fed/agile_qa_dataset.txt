@@ -1,0 +1,60 @@
+Q: What is the name of the article that is based on the content of this page?
+A: ### Content from https://en.wikipedia.org/wiki/Agile_software_development ###   **Contents**     **Agile software development**   Agile software development is an umbrella term for approaches to developing software that reflect the values and principles agreed upon by The Agile Alliance, a group of 17 software practitioners, in 2001. As documented in their Manifesto for Agile Software Development the practitioners value: The practitioners cite inspiration from new practices at the time including extreme
+
+Q: What is the name of the text that you used to create the text?
+A: programming, scrum, dynamic systems development method, adaptive software development and being sympathetic to the need for an alternative to documentation driven, heavyweight software development processes. Many software development practices emerged from the agile mindset. These agile-based practices, sometimes called Agile (with a capital A) include requirements, discovery and solutions improvement through the collaborative effort of self-organizing and cross-functional teams with their customer(s)/end
+
+Q: What is the name of the text that you used to create a question based on?
+A: user(s). While there is much anecdotal evidence that the agile mindset and agile-based practices improve the software development process, the empirical evidence is limited and less than conclusive.   **History**   Iterative and incremental software development methods can be traced back as early as 1957, with evolutionary project management and adaptive software development emerging in the early 1970s. During the 1990s, a number of lightweight software development methods evolved in reaction to the
+
+Q: What is the name of the heavyweight method that critics criticized as overly regulated, planned, and micromanaged?
+A: prevailing heavyweight methods (often referred to collectively as waterfall) that critics described as overly regulated, planned, and micromanaged. These lightweight methods included: rapid application development (RAD), from 1991; the unified process (UP) and dynamic systems development method (DSDM), both from 1994; Scrum, from 1995; Crystal Clear and extreme programming (XP), both from 1996; and feature-driven development (FDD), from 1997. Although these all originated before the publication of the Agile
+
+Q: What did the 17 software developers meet to discuss lightweight development methods?
+A: Manifesto, they are now collectively referred to as agile software development methods. Already since 1991 similar changes had been underway in manufacturing and management thinking derived from Lean management. In 2001, seventeen software developers met at a resort in Snowbird, Utah to discuss lightweight development methods. They were: Kent Beck (Extreme Programming), Ward Cunningham (Extreme Programming), Dave Thomas (Pragmatic Programming, Ruby), Jeff Sutherland (Scrum), Ken Schwaber (Scrum), Jim
+
+Q: What is the name of the group that published the Manifesto for Agile Software Development?
+A: Highsmith (Adaptive Software Development), Alistair Cockburn (Crystal), Robert C. Martin (SOLID), Mike Beedle (Scrum), Arie van Bennekum, Martin Fowler (OOAD and UML), James Grenning, Andrew Hunt (Pragmatic Programming, Ruby), Ron Jeffries (Extreme Programming), Jon Kern, Brian Marick (Ruby, Test-driven development), and Steve Mellor (OOA). The group, The Agile Alliance, published the Manifesto for Agile Software Development. In 2005, a group headed by Cockburn and Highsmith wrote an addendum of project
+
+Q: What is the name of the open-source compendium of the Guide to Agile Practices?
+A: management principles, the PM Declaration of Interdependence, to guide software project management according to agile software development methods. In 2009, a group working with Martin wrote an extension of software development principles, the Software Craftsmanship Manifesto, to guide agile software development according to professional conduct and mastery. In 2011, the Agile Alliance created the Guide to Agile Practices (renamed the Agile Glossary in 2016), an evolving open-source compendium of the
+
+Q: What is the value of the manifesto?
+A: working definitions of agile practices, terms, and elements, along with interpretations and experience guidelines from the worldwide community of agile practitioners.   **Values and principles**     **Values**   The agile manifesto reads: We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value: That is, while there is value in the items on the right, we value the items on the left more. Scott Ambler explained: Introducing the
+
+Q: What did Jim Highsmith say about the Agile movement?
+A: manifesto on behalf of the Agile Alliance, Jim Highsmith said, The Agile movement is not anti-methodology, in fact many of us want to restore credibility to the word methodology. We want to restore a balance. We embrace modeling, but not in order to file some diagram in a dusty corporate repository. We embrace documentation, but not hundreds of pages of never-maintained and rarely-used tomes. We plan, but recognize the limits of planning in a turbulent environment. Those who would brand proponents of XP or
+
+Q: What is the original definition of the term hacker?
+A: SCRUM or any of the other Agile Methodologies as "hackers" are ignorant of both the methodologies and the original definition of the term hacker.   **Principles**   The values are based on these principles:   **Overview**     **Iterative, incremental, and evolutionary**   Most agile development methods break product development work into small increments that minimize the amount of up-front planning and design. Iterations, or sprints, are short time frames (timeboxes) that typically last from one to four
+
+Q: How long does it take to get a working product to be released?
+A: weeks.: 20 Each iteration involves a cross-functional team working in all functions: planning, analysis, design, coding, unit testing, and acceptance testing. At the end of the iteration a working product is demonstrated to stakeholders. This minimizes overall risk and allows the product to adapt to changes quickly. An iteration might not add enough functionality to warrant a market release, but the goal is to have an available release (with minimal bugs) at the end of each iteration. Through incremental
+
+Q: What is the name of the text that you used to create a question about agile development?
+A: development, products have room to "fail often and early" throughout each iterative phase instead of drastically on a final release date. Multiple iterations might be required to release a product or new features. Working software is the primary measure of progress. A key advantage of agile approaches is speed to market and risk mitigation. Smaller increments are typically released to market, reducing the time and cost risks of engineering a product that doesn't meet user requirements.   **Efficient and
+
+Q: What is the 6th principle of the agile manifesto for software development?
+A: face-to-face communication**   The 6th principle of the agile manifesto for software development states "The most efficient and effective method of conveying information to and within a development team is face-to-face conversation". The manifesto, written in 2001 when video conferencing was not widely used, states this in relation to the communication of information, not necessarily that a team should be co-located. The principle of co-location is that co-workers on the same team should be situated
+
+Q: What is the text based on?
+A: together to better establish the identity as a team and to improve communication. This enables face-to-face interaction, ideally in front of a whiteboard, that reduces the cycle time typically taken when questions and answers are mediated through phone, persistent chat, wiki, or email. With the widespread adoption of remote working during the COVID-19 pandemic and changes to tooling, more studies have been conducted around co-location and distributed working which show that co-location is increasingly less
+
+Q: What is the text of the text?
+A: relevant. No matter which development method is followed, every team should include a customer representative (known as product owner in Scrum). This representative is agreed by stakeholders to act on their behalf and makes a personal commitment to being available for developers to answer questions throughout the iteration. At the end of each iteration, the project stakeholders together with the customer representative review progress and re-evaluate priorities with a view to optimizing the return on
+
+Q: What is the name of the text that is used in the agile software development process?
+A: investment (ROI) and ensuring alignment with customer needs and company goals. The importance of stakeholder satisfaction, detailed by frequent interaction and review at the end of each phase, is why the approach is often denoted as a customer-centered methodology. In agile software development, an information radiator is a (normally large) physical display, board with sticky notes or similar, located prominently near the development team, where passers-by can see it. It presents an up-to-date summary of
+
+Q: What is the text of the daily scrum?
+A: the product development status. A build light indicator may also be used to inform a team about the current status of their product development.   **Very short feedback loop and adaptation cycle**   A common characteristic in agile software development is the daily stand-up (known as daily scrum in the Scrum framework). In a brief session (e.g., 15 minutes), team members review collectively how they are progressing toward their goal and agree whether they need to adapt their approach. To keep to the agreed
+
+Q: What is the text of the question?
+A: time limit, teams often use simple coded questions (such as what they completed the previous day, what they aim to complete that day, and whether there are any impediments or risks to progress), and delay detailed discussions and problem resolution until after the stand-up.   **Quality focus**   Specific tools and techniques, such as continuous integration, automated unit testing, pair programming, test-driven development, design patterns, behavior-driven development, domain-driven design, code refactoring
+
+Q: What is the name of the text that you used to create a question based on this text?
+A: and other techniques are often used to improve quality and enhance product development agility. This is predicated on designing and building quality in from the beginning and being able to demonstrate software for customers at any point, or at least at the end of every iteration.   **Philosophy**   Compared to traditional software engineering, agile software development mainly targets complex systems and product development with dynamic, indeterministic and non-linear properties. Accurate estimates, stable
+
+Q: What is the name of the text that you used to create a question based on?
+A: plans, and predictions are often hard to get in early stages, and confidence in them is likely to be low. Agile practitioners use their free will to reduce the "leap of faith" that is needed before any evidence of value can be obtained. Requirements and design are held to be emergent. Big up-front specifications would probably cause a lot of waste in such cases, i.e., are not economically sound. These basic arguments and previous industry experiences, learned from years of successes and failures, have
+
