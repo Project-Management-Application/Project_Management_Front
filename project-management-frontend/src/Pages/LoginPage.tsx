@@ -1,4 +1,5 @@
-import login from "../../assets/iamges/login.png";
+import loginImage from "../assets/images/login.png"; 
+import { Link } from 'react-router-dom';
 
 function LoginPage() { 
   return (
@@ -32,18 +33,18 @@ function LoginPage() {
                 <input type="checkbox" className="size-5 rounded border-gray-300" />
                 <span className="ml-2 text-gray-700">Remember me</span>
               </label>
-              <a href="#" className="text-blue-500 hover:underline">Forgot password?</a>
+              <Link to ="/forget-password" className="text-blue-500 hover:underline">Forgot password?</Link>
             </div>
             <button type="submit" className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700">Sign in to your account</button>
             <p className="text-center text-base text-gray-500">
-              Don’t have an account? <a href="#" className="text-blue-500 hover:underline">Sign up</a>
+              Don’t have an account? <Link to = "/registration" className="text-blue-500 hover:underline">Sign up</Link>
             </p>
           </form>
         </div>
 
         {/* Right Section - Illustration */}
         <div className="flex w-1/2 items-center justify-center bg-blue-50 p-12">
-          <img src={login} alt="Illustration" className="w-full rounded-3xl object-cover" />
+          <img src={loginImage} alt="Illustration" className="w-full rounded-3xl object-cover" />
         </div>
       </div>
     </section>
