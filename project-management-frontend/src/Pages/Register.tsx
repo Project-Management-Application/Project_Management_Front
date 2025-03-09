@@ -1,12 +1,11 @@
-import register from "../../assets/images/register.png";
-
+import registerImage from "../assets/images/register.png";
 function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-12">
       <div className="flex w-full max-w-7xl rounded-3xl bg-white shadow-2xl">
         {/* Left Section - Illustration */}
         <div className="hidden items-center justify-center bg-blue-100 p-8 lg:flex lg:w-1/2">
-          <img src={register} alt="Registration Illustration" className="w-3/4" />
+          <img src={registerImage} alt="Illustration" className="w-3/4" />
         </div>
 
         {/* Right Section - Form */}
