@@ -1,8 +1,12 @@
 import LoginPage from "./Components/LoginPage/LoginPage";
+import Register from "./Components/Register/Register";
 
 function App() {
   return (
-    <main> <LoginPage/> </main>
+    <main>
+      <LoginPage />
+      <Register />
+    </main>
   );
 }
 
