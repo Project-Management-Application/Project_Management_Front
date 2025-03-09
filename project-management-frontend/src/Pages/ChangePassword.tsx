@@ -24,7 +24,7 @@ function ChangePassword() {
       <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
         <a href="#" className="mb-6 flex items-center text-2xl font-semibold text-gray-900 dark:text-white">
           <img className="mr-2 size-8" src="src/assets/images/taskify-logo.png" alt="logo"/>
-          Flowbite    
+          Taskify    
         </a>
         <div className="w-full rounded-lg bg-white p-6 shadow dark:border dark:border-gray-700 dark:bg-gray-800 sm:max-w-md sm:p-8 md:mt-0">
           <h2 className="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
