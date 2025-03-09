@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function LoginPage() {
   return (
     <section className="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-8 dark:bg-gray-900">
@@ -21,7 +23,7 @@ function LoginPage() {
               <input type="checkbox" className="size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" required />
               <span className="ml-2 text-gray-600 dark:text-gray-300">Remember me</span>
             </label>
-            <a href="#" className="text-blue-600 hover:underline dark:text-blue-400">Forgot password?</a>
+            <Link to="/forget-password" className="text-blue-600 hover:underline dark:text-blue-400">Forgot password?</Link>
           </div>
           <button type="submit" className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Sign in</button>
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
