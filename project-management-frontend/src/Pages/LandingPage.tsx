@@ -5,6 +5,7 @@ import HeroSection from "../Components/LandingPage/HeroSection"
 import PricingSection from "../Components/LandingPage/PricingSection"
 import FooterSection from "../Components/LandingPage/FooterSection"
 
+
 function LandingPage() {
   return (
     <div>
