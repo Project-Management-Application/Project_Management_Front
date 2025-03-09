@@ -5,6 +5,7 @@ import PageNotFound from './Pages/PageNotFound';
 import ForgotPassword from './Pages/ForgetPassword';
 import ChangePassword from './Pages/ChangePassword';
 import Register from './Pages/Register';
+import EmailVerification from './Pages/EmailVerification';
 
 
 
@@ -14,7 +15,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        
+        <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forget-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
