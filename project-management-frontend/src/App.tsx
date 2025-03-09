@@ -20,6 +20,7 @@ function App() {
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/registration" element={<Register />} />
+        
       </Routes>
     </Router>
   );

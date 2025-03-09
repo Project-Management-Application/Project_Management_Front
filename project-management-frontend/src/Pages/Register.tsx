@@ -1,4 +1,6 @@
 import registerImage from "../assets/images/register.png";
+import { Link } from "react-router-dom";
+
 function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-12">
@@ -62,8 +64,13 @@ function Register() {
                 className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
               />
             </div>
-            <button className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700">Sign Up</button>
           </form>
+          <div className="mt-6">
+            <button className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700">Sign Up</button>
+            <p className="mt-4 text-center text-sm text-gray-600">
+              Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Log In</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
