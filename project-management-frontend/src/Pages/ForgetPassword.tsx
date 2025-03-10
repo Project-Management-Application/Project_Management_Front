@@ -1,31 +1,40 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { forgotPassword } from "../services/api";
+import { ForgotPassRequest } from "../types/auth";
+import { Spinner } from "flowbite-react"; // Import Flowbite spinner
+
 
 function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic email validation
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return;
     }
-    
-    // Here you would typically call your API to send a password reset email
-    // For now, we'll just simulate success
-    setIsSubmitted(true);
-    setError('');
+    setLoading(true);
+    try {
+      const request: ForgotPassRequest = { email };
+      await forgotPassword(request);
+      setIsSubmitted(true);
+      setError("");
+    } catch (err) {
+      setError("Failed to send reset email. Please try again.");
+    }finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          {/* Replace with your logo */}
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-blue-600">
             <svg className="size-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -36,7 +45,7 @@ function ForgotPassword() {
             No worries, we'll send you reset instructions.
           </p>
         </div>
-        
+
         {!isSubmitted ? (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm">
@@ -75,11 +84,13 @@ function ForgotPassword() {
               <button
                 type="submit"
                 className="group relative flex w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-700 dark:hover:bg-blue-800"
+                disabled={loading}
               >
-                Reset Password
+                {loading ? <Spinner size="sm" className="mr-2" /> : "Reset Password"}
+                {loading ? "Loading..." : ""}
               </button>
             </div>
-            
+
             <div className="flex items-center justify-center text-sm">
               <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                 Back to login
@@ -104,10 +115,7 @@ function ForgotPassword() {
                 </div>
                 <div className="mt-4">
                   <div className="-mx-2 -my-1.5 flex">
-                    <Link
-                      to="/login"
-                      className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800"
-                    >
+                    <Link to="/login" className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800">
                       Return to login
                     </Link>
                   </div>
