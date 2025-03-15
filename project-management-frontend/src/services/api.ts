@@ -3,6 +3,8 @@ import { RegisterRequest, AuthenticationResponse } from "../types/auth";
 import { ForgotPassRequest, ForgotPassResponse } from "../types/auth";
 import { ResetPasswordRequest } from "../types/auth";
 import { OtpVerificationRequest } from "../types/auth";
+import { AuthenticationRequest } from "../types/auth";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 
@@ -47,26 +49,15 @@ export const resetPassword = async (data: ResetPasswordRequest) => {
   }
 };
 
-export const login = async (email: string, password: string): Promise<AuthenticationResponse> => {
-  try {
-    const response = await axios.post(`${API_URL}/api/v1/auth/authenticate`, { email, password });
-    return response.data;
-  } catch (error) {
-    console.error("Error during login:", error);
-    throw error;
-  }
+export const authenticate = async (data: AuthenticationRequest): Promise<AuthenticationResponse> => {
+  const response = await axios.post<AuthenticationResponse>(`${API_URL}/api/v1/auth/authenticate`, data);
+  return response.data;
 };
 
-// Google Login
-export const googleLogin = async (idToken: string): Promise<AuthenticationResponse> => {
-  try {
-    const response = await axios.post(`${API_URL}/api/v1/auth/google-authenticate`, null, {
-      params: { idToken },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error during Google authentication:", error);
-    throw error;
-  }
+export const googleAuthenticate = async (idToken: string): Promise<AuthenticationResponse> => {
+  const response = await axios.post<AuthenticationResponse>(`${API_URL}/google-authenticate`, null, {
+    params: { idToken },
+  });
+  return response.data;
 };
 

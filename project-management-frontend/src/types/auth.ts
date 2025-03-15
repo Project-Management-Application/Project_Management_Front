@@ -1,11 +1,16 @@
 // Type for the registration form data
-export interface RegisterRequest {
+  export interface RegisterRequest {
+    role: string;
     firstName: string;
     lastName: string;
     phoneNumber: string;
     email: string;
     password: string;
     confirmPassword: string;
+  }
+  export interface AuthenticationRequest {
+    email: string;
+    password: string;
   }
   
   // Type for the authentication response
@@ -35,5 +40,10 @@ export interface RegisterRequest {
     userId: number;
     newPassword: string;
   }
+
+  
+  
+
+  
   
   
