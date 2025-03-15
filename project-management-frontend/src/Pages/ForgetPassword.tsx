@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { forgotPassword } from "../services/api";
-import { ForgotPassRequest } from "../types/auth";
+import { ForgotPassRequest, ForgotPassResponse } from "../types/auth";
 import { Spinner } from "flowbite-react"; // Import Flowbite spinner
-
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -13,20 +12,27 @@ function ForgotPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setError("Please enter a valid email address");
       return;
     }
+
     setLoading(true);
     try {
       const request: ForgotPassRequest = { email };
-      await forgotPassword(request);
+      const response: ForgotPassResponse = await forgotPassword(request);
+
+      // Store token and userId in local storage
+      localStorage.setItem("resetToken", response.token);
+      localStorage.setItem("resetUserId", response.userId.toString());
+
       setIsSubmitted(true);
       setError("");
+
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -67,16 +73,7 @@ function ForgotPassword() {
 
             {error && (
               <div className="rounded-md bg-red-50 p-4 dark:bg-red-900">
-                <div className="flex">
-                  <div className="shrink-0">
-                    <svg className="size-5 text-red-400 dark:text-red-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-red-800 dark:text-red-200">{error}</p>
-                  </div>
-                </div>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">{error}</p>
               </div>
             )}
 
@@ -87,7 +84,7 @@ function ForgotPassword() {
                 disabled={loading}
               >
                 {loading ? <Spinner size="sm" className="mr-2" /> : "Reset Password"}
-                {loading ? "Loading..." : ""}
+                {loading && "Loading..."}
               </button>
             </div>
 
@@ -99,28 +96,18 @@ function ForgotPassword() {
           </form>
         ) : (
           <div className="mt-8 rounded-md bg-green-50 p-4 dark:bg-green-900">
-            <div className="flex">
-              <div className="shrink-0">
-                <svg className="size-5 text-green-400 dark:text-green-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800 dark:text-green-200">Email sent</h3>
-                <div className="mt-2 text-sm text-green-700 dark:text-green-300">
-                  <p>
-                    We've sent a password reset link to <span className="font-medium">{email}</span>.
-                    Please check your inbox and follow the instructions to reset your password.
-                  </p>
-                </div>
-                <div className="mt-4">
-                  <div className="-mx-2 -my-1.5 flex">
-                    <Link to="/login" className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800">
-                      Return to login
-                    </Link>
-                  </div>
-                </div>
-              </div>
+            <h3 className="text-sm font-medium text-green-800 dark:text-green-200">Email sent</h3>
+            <p className="text-sm text-green-700 dark:text-green-300">
+              We've sent a password reset link to <span className="font-medium">{email}</span>.
+              Please check your inbox and follow the instructions to reset your password.
+            </p>
+            <div className="mt-4">
+              <Link
+                to="/login"
+                className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800"
+              >
+                Return to login
+              </Link>
             </div>
           </div>
         )}

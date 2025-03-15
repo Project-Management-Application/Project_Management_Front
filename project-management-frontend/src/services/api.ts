@@ -1,6 +1,7 @@
 import axios from "axios";
 import { RegisterRequest, AuthenticationResponse } from "../types/auth";
 import { ForgotPassRequest, ForgotPassResponse } from "../types/auth";
+import { ResetPasswordRequest } from "../types/auth";
 import { OtpVerificationRequest } from "../types/auth";
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,16 +13,16 @@ export const registerUser = async (data: RegisterRequest): Promise<Authenticatio
     } catch (error) {
       throw new Error("Error during registration");
     }
-  };
+};
 
-  export const verifyOtp = async (data: OtpVerificationRequest) => {
+export const verifyOtp = async (data: OtpVerificationRequest) => {
     try {
       const response = await axios.post(`${API_URL}/api/v1/email-verification`, data);
       return response.data;
     } catch (error) {
       throw new Error("Error during email verification");
     }
-  };
+};
 
 
 
@@ -29,3 +30,43 @@ export const forgotPassword = async (data: ForgotPassRequest): Promise<ForgotPas
   const response = await axios.post<ForgotPassResponse>(`${API_URL}/api/v1/auth/Forgotpassword`, data);
   return response.data;
 };
+
+
+
+export const resetPassword = async (data: ResetPasswordRequest) => {
+  try {
+    const response = await axios.patch(`${API_URL}/api/v1/auth/resetpassword`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw error;
+  }
+};
+
+export const login = async (email: string, password: string): Promise<AuthenticationResponse> => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/auth/authenticate`, { email, password });
+    return response.data;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw error;
+  }
+};
+
+// Google Login
+export const googleLogin = async (idToken: string): Promise<AuthenticationResponse> => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/auth/google-authenticate`, null, {
+      params: { idToken },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error during Google authentication:", error);
+    throw error;
+  }
+};
+

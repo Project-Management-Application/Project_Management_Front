@@ -29,4 +29,11 @@ export interface RegisterRequest {
     token: string;
     userId: number;
   }
+
+  export interface ResetPasswordRequest {
+    token: string;
+    userId: number;
+    newPassword: string;
+  }
+  
   

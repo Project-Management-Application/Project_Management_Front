@@ -138,7 +138,7 @@ function Register() {
               {loading ? "Loading..." : ""}
             </button>
           </form>
-          </form>
+          
           <div className="mt-6">
             <button className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700">Sign Up</button>
             <p className="mt-4 text-center text-sm text-gray-600">
