@@ -36,21 +36,26 @@ function EmailVerification() {
       setError("Please enter all 6 digits.");
       return;
     }
-    
+  
     setError("");
-
+  
     try {
       const otpString = otp.join("");
       const requestData: OtpVerificationRequest = { email, otp: otpString };
-
+  
       await verifyOtp(requestData);
       setIsVerified(true);
-      localStorage.removeItem("userEmail"); // Clear email from storage after successful verification
-    } catch (err) {
-      setError(err);
+      localStorage.removeItem("userEmail"); // Clear email after success
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Invalid OTP. Please try again.");
+      } else {
+        setError("Invalid OTP. Please try again.");
+      }
+      setOtp(["", "", "", "", "", ""]);
     }
   };
-
+  
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
