@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authenticate, googleAuthenticate } from "../services/api";
+import { authenticate, googleAuthenticate } from "../services/authApi";
 import { AuthenticationRequest } from "../types/auth";
 import loginImage from "../assets/images/login.png";
 import { Link } from "react-router-dom";

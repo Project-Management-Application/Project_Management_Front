@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { registerUser } from "../services/api";
+import { registerUser } from "../services/authApi";
 import { RegisterRequest, AuthenticationResponse } from "../types/auth";
 import registerImage from "../assets/images/register.png";
 
@@ -62,89 +62,89 @@ function Register() {
             Create an account
           </h1>
           {error && <div className="text-red-500">{error}</div>}
-          <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                placeholder="First Name"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
+          <form onSubmit={handleSubmit}>
+            <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="First Name"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Last Name"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">Phone Number</label>
+                <input
+                  type="text"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="XX-XXX-XXX"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="user@example.com"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-900">Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
+                />
+              </div>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                placeholder="Last Name"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
+            <div className="mt-6">
+              <button
+                type="submit"
+                className=" w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700"
+                disabled={loading}
+              >
+                {loading ? <Spinner size="sm" className="mr-2" /> : "Sign Up"}
+                {loading ? "Loading..." : ""}
+              </button>
+              <p className="mt-4 text-center text-sm text-gray-600">
+                Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Log In</Link>
+              </p>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Phone Number</label>
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="XXX-XX-XXXX-XXX"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="user@example.com"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:ring focus:ring-blue-300"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700"
-              disabled={loading}
-            >
-              {loading ? <Spinner size="sm" className="mr-2" /> : "Sign Up"}
-              {loading ? "Loading..." : ""}
-            </button>
-          </form>
-          
-          <div className="mt-6">
-            <button className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700">Sign Up</button>
-            <p className="mt-4 text-center text-sm text-gray-600">
-              Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Log In</Link>
-            </p>
-          </div>
+          </form>    
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { resetPassword } from "../services/api";
+import { resetPassword } from "../services/authApi";
 
 function ChangePassword() {
   const [showPassword] = useState(false);

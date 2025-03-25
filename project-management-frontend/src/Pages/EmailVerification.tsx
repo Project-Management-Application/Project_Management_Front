@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { verifyOtp } from "../services/api";
+import { verifyOtp } from "../services/authApi";
 import { OtpVerificationRequest } from "../types/auth";
 
 function EmailVerification() {

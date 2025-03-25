@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Checkbox, Button, Badge, TextInput, Dropdown } from "flowbite-react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
-import { Ticket } from "../../types/sprints";
+import { Sprint, Backlog, Ticket } from "../../types/backlog";
 
 type SprintBoardProps = {
-  title: string;
-  isSprint: boolean;
+  sprint?: Sprint;   // Optional Sprint
+  backlog?: Backlog; // Optional Backlog
   onCreateSprint?: () => void;
 };
 
@@ -15,20 +15,20 @@ const statusOptions = [
   { label: "TERMINÉ", color: "green" },
 ];
 
-const SprintBoard: React.FC<SprintBoardProps> = ({ title, isSprint, onCreateSprint }) => {
+const SprintBoard: React.FC<SprintBoardProps> = ({ sprint, onCreateSprint }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [newTicket, setNewTicket] = useState<string>("");
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
+  const isSprint = !!sprint; // Check if it's a sprint
+
   const handleAddTicket = () => {
     if (newTicket.trim() === "") return;
     const newEntry: Ticket = {
-      id: `SCRUM-${tickets.length + 1}`,
-      description: newTicket,
-      status: "À FAIRE",
-      assignee: "-",
-      statusColor: "gray",
+      ticketId: Date.now(), 
+      title: newTicket,
+      colorCode: "gray",
     };
     setTickets([...tickets, newEntry]);
     setNewTicket("");
@@ -41,61 +41,57 @@ const SprintBoard: React.FC<SprintBoardProps> = ({ title, isSprint, onCreateSpri
     }
   };
 
-  const handleStatusChange = (ticketId: string, newStatus: string) => {
+  const handleStatusChange = (ticketId: number, newStatus: string) => {
     const statusData = statusOptions.find((s) => s.label === newStatus);
     setTickets((prevTickets) =>
       prevTickets.map((ticket) =>
-        ticket.id === ticketId
-          ? { ...ticket, status: newStatus, statusColor: statusData ? statusData.color : "gray" }
+        ticket.ticketId === ticketId
+          ? { ...ticket, status: newStatus, colorCode: statusData?.color || "gray" }
           : ticket
       )
     );
   };
-  
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-2xl mx-auto mt-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <HiChevronDown className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
-          <h2 className="text-lg font-semibold">{title}</h2>
+          <h2 className="text-lg font-semibold">
+            {isSprint ? `Sprint ${sprint?.sprintId}` : "Backlog"}
+          </h2>
         </div>
         {isSprint ? (
-          <Button color="gray">Terminer le sprint</Button>
+          <Button color="gray">Commencer le sprint</Button>
         ) : (
           <Button color="blue" onClick={onCreateSprint}>Créer un sprint</Button>
         )}
       </div>
+
       {isOpen && (
         <div className="border rounded-md divide-y">
           {tickets.map((ticket) => (
-            <div key={ticket.id} className="flex items-center p-3 gap-4">
+            <div key={ticket.ticketId} className="flex items-center p-3 gap-4">
               <Checkbox />
-              <span className="text-sm font-medium text-gray-700">{ticket.id}</span>
-              <span className="flex-1 text-sm text-gray-600">{ticket.description}</span>
+              <span className="text-sm font-medium text-gray-700">{ticket.title}</span>
 
-              {/* Flowbite Dropdown for Status Selection */}
-              <Dropdown label={ticket.status} size="xs" color="light" className="text-sm">
-              {statusOptions.map((option) => (
-                <Dropdown.Item
-                  key={option.label}
-                  onClick={() => handleStatusChange(ticket.id, option.label)}
-                >
-                  <Badge color={option.color} className="px-2 py-1 text-xs">
-                    {option.label}
-                  </Badge>
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-
-
-              <div className="w-8 h-8 bg-gray-200 flex items-center justify-center rounded-full text-sm font-bold">
-                {ticket.assignee}
-              </div>
+              <Dropdown label="Status" size="xs" color="light" className="text-sm">
+                {statusOptions.map((option) => (
+                  <Dropdown.Item
+                    key={option.label}
+                    onClick={() => handleStatusChange(ticket.ticketId!, option.label)}
+                  >
+                    <Badge color={option.color} className="px-2 py-1 text-xs">
+                      {option.label}
+                    </Badge>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown>
             </div>
           ))}
         </div>
       )}
+
       {isOpen && (
         <div className="mt-4">
           {isCreating ? (

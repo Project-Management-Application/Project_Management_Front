@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link} from "react-router-dom";
-import { forgotPassword } from "../services/api";
+import { forgotPassword } from "../services/authApi";
 import { ForgotPassRequest, ForgotPassResponse } from "../types/auth";
 import { Spinner } from "flowbite-react"; // Import Flowbite spinner
 
