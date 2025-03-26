@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SprintBoard from "../Components/Backlog/SprintBoard";
-import type { Sprint, Backlog } from "../types/backlog";
+import type { Sprint, Backlog, Task } from "../types/backlog";
 import Navbar from "../Components/Backlog/Navbar";
-import { createBacklog } from "../services/backlogApi";
-import { useRef } from "react";
-
+import { createBacklog, createSprint } from "../services/backlogApi";
 
 const Backlog: React.FC = () => {
   const [sprints, setSprints] = useState<Sprint[]>([]);
@@ -27,28 +25,61 @@ const Backlog: React.FC = () => {
     if (!backlog) {
       initializeBacklog();
     }
-  }, []);
+  }, [backlog]);
 
-  const handleCreateSprint = () => {
+  const handleCreateSprint = async () => {
     if (!backlog) return;
+    try {
+      const sprintId = await createSprint(backlog.backlogId!);
 
-    const newSprint: Sprint = {
-      sprintId: Date.now(), 
-      backlog: backlog, 
-      tasks: [],
-    };
+      const newSprint: Sprint = {
+        sprintId,
+        backlog: backlog,
+        tasks: [],
+      };
 
-    setSprints((prevSprints) => [...prevSprints, newSprint]);
-    setBacklog((prev) => prev ? { ...prev, Sprints: [...(prev.Sprints || []), newSprint] } : null);
+      setSprints((prevSprints) => [...prevSprints, newSprint]);
+      setBacklog((prev) =>
+        prev ? { ...prev, Sprints: [...(prev.Sprints || []), newSprint] } : null
+      );
+    } catch (error) {
+      console.error("Error creating sprint:", error);
+    }
+  };
+
+  const handleAddTaskToSprint = (sprintId: number, newTask: Task) => {
+    setSprints((prevSprints) =>
+      prevSprints.map((sprint) =>
+        sprint.sprintId === sprintId
+          ? { ...sprint, tasks: [...(sprint.tasks || []), newTask] }
+          : sprint
+      )
+    );
+  };
+
+  const handleAddTaskToBacklog = (newTask: Task) => {
+    setBacklog((prev) =>
+      prev ? { ...prev, tasks: [...(prev.tasks || []), newTask] } : null
+    );
   };
 
   return (
     <div>
       <Navbar />
       <div className="pt-16">
-        {backlog && <SprintBoard backlog={backlog} onCreateSprint={handleCreateSprint} />}
+        {backlog && (
+          <SprintBoard
+            backlog={backlog}
+            onCreateSprint={handleCreateSprint}
+            onTaskCreate={handleAddTaskToBacklog}
+          />
+        )}
         {sprints.map((sprint) => (
-          <SprintBoard key={sprint.sprintId} sprint={sprint} />
+          <SprintBoard
+            key={sprint.sprintId}
+            sprint={sprint}
+            onTaskCreate={(newTask) => handleAddTaskToSprint(sprint.sprintId!, newTask)}
+          />
         ))}
       </div>
     </div>

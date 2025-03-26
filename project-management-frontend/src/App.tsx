@@ -23,7 +23,6 @@ function App() {
         <Route path="*" element={<PageNotFound />} />
         <Route path="/registration" element={<Register />} />
         <Route path="/backlog" element={<Backlog />} />
-        
       </Routes>
     </Router>
   );
