@@ -47,6 +47,10 @@ const Backlog: React.FC = () => {
     }
   };
 
+  const handleDeleteSprint = (sprintId: number) => {
+    setSprints((prevSprints) => prevSprints.filter((sprint) => sprint.sprintId !== sprintId));
+  };
+
   const handleAddTaskToSprint = (sprintId: number, newTask: Task) => {
     setSprints((prevSprints) =>
       prevSprints.map((sprint) =>
@@ -79,6 +83,7 @@ const Backlog: React.FC = () => {
             key={sprint.sprintId}
             sprint={sprint}
             onTaskCreate={(newTask) => handleAddTaskToSprint(sprint.sprintId!, newTask)}
+            onDeleteSprint={handleDeleteSprint} // ✅ Pass delete function
           />
         ))}
       </div>

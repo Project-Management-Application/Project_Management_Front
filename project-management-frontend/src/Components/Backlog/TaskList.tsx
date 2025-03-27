@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { Task } from "../../types/backlog";
-import { Checkbox, TextInput } from "flowbite-react";
+import { Checkbox, TextInput, Select } from "flowbite-react";
+import { updateTaskLabel } from "../../services/backlogApi";
+
+const TASK_STATUSES = [
+  { label: "TO DO", value: "TODO" },
+  { label: "IN PROGRESS", value: "INPROGRESS" },
+  { label: "DONE", value: "DONE" }
+];
 
 type TaskListProps = {
   tasks: Task[];
   onAddTask: (title: string) => void;
+  onUpdateTaskLabel: (taskId: number, newStatus: string) => void; // ✅ New prop
 };
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask, onUpdateTaskLabel }) => {
   const [newTask, setNewTask] = useState<string>("");
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
@@ -24,12 +32,32 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask }) => {
     }
   };
 
+  const handleStatusChange = async (taskId: number, newStatus: string) => {
+    try {
+      await updateTaskLabel(taskId, newStatus);
+      onUpdateTaskLabel(taskId, newStatus); // ✅ Update parent state
+    } catch (error) {
+      console.error("Error updating task label:", error);
+    }
+  };
+
   return (
     <div>
       {tasks.map((task) => (
         <div key={task.taskId} className="flex items-center p-3 gap-4">
           <Checkbox />
-          <span className="text-sm font-medium text-gray-700">{task.title}</span>
+          <span className="text-sm font-medium text-gray-700 flex-1">{task.title}</span>
+          <Select
+            value={task.label}
+            onChange={(e) => handleStatusChange(task.taskId!, e.target.value)}
+            className="w-40 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ml-auto"
+          >
+            {TASK_STATUSES.map((status) => (
+              <option key={status.value} value={status.value}>
+                {status.label}
+              </option>
+            ))}
+          </Select>
         </div>
       ))}
 

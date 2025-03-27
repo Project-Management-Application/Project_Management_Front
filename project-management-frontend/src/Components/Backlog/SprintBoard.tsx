@@ -1,15 +1,17 @@
 import React, { useState } from "react";
+import { HiTrash } from "react-icons/hi";
 import { Button } from "flowbite-react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
 import { Sprint, Backlog, Task } from "../../types/backlog";
-import { createTask,updateSprintTitle } from "../../services/backlogApi";
-import TaskList from "./TaskList"; // ✅ Import new component
+import { createTask, updateSprintTitle, deleteSprint } from "../../services/backlogApi";
+import TaskList from "./TaskList"; // ✅ Import TaskList
 
 type SprintBoardProps = {
   sprint?: Sprint;
   backlog?: Backlog;
   onCreateSprint?: () => void;
   onTaskCreate?: (newTask: Task) => void;
+  onDeleteSprint?: (sprintId: number) => void; // ✅ Added prop for deleting sprint
 };
 
 const SprintBoard: React.FC<SprintBoardProps> = ({
@@ -17,12 +19,12 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
   backlog,
   onCreateSprint,
   onTaskCreate,
+  onDeleteSprint,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Task[]>(sprint?.tasks || backlog?.tasks || []);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(sprint ? `Sprint ${sprint.sprintId}` : "Backlog");
-
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -38,7 +40,6 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
     }
     setIsEditingTitle(false);
   };
-
 
   const handleAddTask = async (title: string) => {
     try {
@@ -58,16 +59,34 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
     }
   };
 
+  const handleDeleteSprint = async () => {
+    if (!sprint) return;
+    try {
+      await deleteSprint(sprint.sprintId!);
+      console.log(`Sprint ${sprint.sprintId} deleted!`);
+      onDeleteSprint?.(sprint.sprintId!); // Notify parent component
+    } catch (error) {
+      console.error("Error deleting sprint:", error);
+    }
+  };
+
+  const handleUpdateTaskLabel = (taskId: number, newStatus: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.taskId === taskId ? { ...task, label: newStatus } : task
+      )
+    );
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-2xl mx-auto mt-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <HiChevronDown className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
-          {/* Backlog title (Fixed) */}
+          
           {backlog && !sprint ? (
             <h2 className="text-lg font-semibold">Backlog</h2>
           ) : (
-            // Sprint title (Editable)
             isEditingTitle ? (
               <input
                 type="text"
@@ -88,16 +107,19 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
             )
           )}
         </div>
-        {sprint ? (
-          <Button color="gray">Commencer le sprint</Button>
-        ) : (
-          <Button color="blue" onClick={onCreateSprint}>
-            Créer un sprint
+      { sprint ? (
+        <div className="flex gap-2">
+          <Button color="gray" size="sm">Commencer le sprint</Button>
+          <Button color="red" size="xs" pill onClick={handleDeleteSprint}>
+            <HiTrash className="w-4 h-4" />
           </Button>
-        )}
+        </div>
+      ) : (
+        <Button color="blue" onClick={onCreateSprint}>Créer un sprint</Button>
+      )}
       </div>
 
-      {isOpen && <TaskList tasks={tasks} onAddTask={handleAddTask} />}
+      {isOpen && <TaskList tasks={tasks} onAddTask={handleAddTask} onUpdateTaskLabel={handleUpdateTaskLabel} />}
     </div>
   );
 };
