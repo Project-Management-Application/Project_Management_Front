@@ -6,6 +6,7 @@ import ForgotPassword from './Pages/ForgetPassword';
 import ChangePassword from './Pages/ChangePassword';
 import Register from './Pages/Register';
 import EmailVerification from './Pages/EmailVerification';
+import Dashboard from './Pages/Dashboard';
 
 
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/registration" element={<Register />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
