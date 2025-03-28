@@ -1,31 +1,61 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { verifyOtp } from "../services/api";
+import { OtpVerificationRequest } from "../types/auth";
 
 function EmailVerification() {
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("userEmail");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    } else {
+      setError("No email found. Please sign up again.");
+    }
+  }, []);
 
   const handleOtpChange = (index: number, value: string) => {
-    // Only allow numbers and single digit
     if (/^\d?$/.test(value)) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
       if (value && index < 5) {
-        const nextInput = document.getElementById(`otp-${index + 1}`);
-        nextInput?.focus();
+        document.getElementById(`otp-${index + 1}`)?.focus();
       }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isComplete = otp.every(digit => digit !== '');
-    if (isComplete) {
+    const isComplete = otp.every((digit) => digit !== "");
+    if (!isComplete) {
+      setError("Please enter all 6 digits.");
+      return;
+    }
+  
+    setError("");
+  
+    try {
+      const otpString = otp.join("");
+      const requestData: OtpVerificationRequest = { email, otp: otpString };
+  
+      await verifyOtp(requestData);
       setIsVerified(true);
+      localStorage.removeItem("userEmail"); // Clear email after success
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Invalid OTP. Please try again.");
+      } else {
+        setError("Invalid OTP. Please try again.");
+      }
+      setOtp(["", "", "", "", "", ""]);
     }
   };
-
+  
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
@@ -37,12 +67,16 @@ function EmailVerification() {
           <h2 className="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
             Verify Your Email
           </h2>
-          
+
           {!isVerified ? (
             <form className="mt-4 space-y-4 md:space-y-5 lg:mt-5" onSubmit={handleSubmit}>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                A 6-digit verification code has been sent to <strong>{email}</strong>
+              </p>
+
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                  Enter the 6-digit code sent to your email
+                  Enter the 6-digit code
                 </label>
                 <div className="flex space-x-2">
                   {otp.map((digit, index) => (
@@ -53,15 +87,18 @@ function EmailVerification() {
                       maxLength={1}
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
-                      className="block w-12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-center text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      className="block w-12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-center text-sm text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       required
                     />
                   ))}
                 </div>
               </div>
+
+              {error && <p className="text-sm text-red-500">{error}</p>}
+
               <button 
                 type="submit" 
-                className="w-full rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700"
               >
                 Verify Code
               </button>
@@ -85,7 +122,7 @@ function EmailVerification() {
                     <div className="-mx-2 -my-1.5 flex">
                       <Link
                         to="/login"
-                        className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800"
+                        className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100"
                       >
                         Go to Login
                       </Link>
@@ -98,7 +135,7 @@ function EmailVerification() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default EmailVerification
+export default EmailVerification;

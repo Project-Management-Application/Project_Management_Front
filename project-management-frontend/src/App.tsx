@@ -6,7 +6,11 @@ import ForgotPassword from './Pages/ForgetPassword';
 import ChangePassword from './Pages/ChangePassword';
 import Register from './Pages/Register';
 import EmailVerification from './Pages/EmailVerification';
+
 import Dashboard from './Pages/Dashboard';
+
+import Backlog from './Pages/Backlog';
+
 
 
 
@@ -22,7 +26,11 @@ function App() {
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/registration" element={<Register />} />
+
         <Route path="/Dashboard" element={<Dashboard />} />
+
+        <Route path="/backlog" element={<Backlog />} />
+        
       </Routes>
     </Router>
   );
