@@ -8,7 +8,19 @@ body {
 }
 
 
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
 
+::-webkit-scrollbar-track {
+  background: transparent; /* Makes the track transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* Gray-400 color */
+  border-radius: 4px;
+}
 
 
 
