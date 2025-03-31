@@ -1,11 +1,50 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { initFlowbite } from 'flowbite';
+import { getDashboardData } from '../../services/Workspace-apis';
+import { DashboardData } from '../../types/DashboardData';
 
 const Sidebar: React.FC = () => {
-  React.useEffect(() => {
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
     initFlowbite();
-  }, []);
+    const fetchData = async () => {
+      try {
+        const data = await getDashboardData();
+        setDashboardData(data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        navigate('/login'); // Redirect to login if fetch fails
+      }
+    };
+    fetchData();
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDashboardData();
+        setDashboardData(data);
+      } catch (error) {
+        navigate('/login'); // Redirect to login if fetch fails
+      }
+    };
+
+    const handleProjectCreated = () => {
+      fetchData(); // Refresh dashboard data when a project is created
+    };
+    window.addEventListener('projectCreated', handleProjectCreated);
+    return () => {
+      window.removeEventListener('projectCreated', handleProjectCreated); // Cleanup
+    };
+  }, [navigate]);
+
+  if (loading) return null; // Or a loading spinner
 
   return (
     <aside
@@ -13,15 +52,11 @@ const Sidebar: React.FC = () => {
       className="h-[calc(100vh-var(--header-height))] w-64 transition-transform"
       aria-label="Sidenav"
     >
-    <div
-  className="h-full overflow-y-auto overflow-x-hidden border-r border-gray-200 
-  bg-white px-3 py-5 
-  dark:border-gray-700 dark:bg-gray-800"
->
+      <div className="h-full overflow-y-auto overflow-x-hidden border-r border-gray-200 bg-white px-3 py-5 dark:border-gray-700 dark:bg-gray-800">
         {/* Workspace Header */}
         <div className="mb-4 flex items-center justify-between px-2">
           <div className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-            Espace de travail de user
+            {dashboardData?.workspace.name || 'Workspace'}
           </div>
         </div>
 
@@ -29,8 +64,12 @@ const Sidebar: React.FC = () => {
         <ul className="space-y-2">
           <li>
             <Link
-              to=""
-              className="group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              to="/dashboard/projects" // Updated route
+              className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+                location.pathname === '/dashboard/projects'
+                  ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                  : ''
+              }`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -42,21 +81,29 @@ const Sidebar: React.FC = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-layout-dashboard mr-3 text-gray-400 dark:text-gray-300"
+                className={`mr-3 ${
+                  location.pathname === '/dashboard/projects'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-gray-400 dark:text-gray-300'
+                }`}
               >
                 <rect width="7" height="9" x="3" y="3" rx="1" />
                 <rect width="7" height="5" x="14" y="3" rx="1" />
                 <rect width="7" height="9" x="14" y="12" rx="1" />
                 <rect width="7" height="5" x="3" y="16" rx="1" />
               </svg>
-              <span>Projets</span>
+              <span>Projects</span>
             </Link>
           </li>
           <li>
-            <Link
-              to="/members"
-              className="group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
+          <Link
+    to="/dashboard/members"
+    className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+      location.pathname === '/dashboard/members' // Fixed condition
+        ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+        : ''
+    }`}
+  >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -67,14 +114,18 @@ const Sidebar: React.FC = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-users mr-3 text-gray-400 dark:text-gray-300"
+                className={`mr-3 ${
+                  location.pathname === '/members'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-gray-400 dark:text-gray-300'
+                }`}
               >
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <span>Membres</span>
+              <span>Members</span>
             </Link>
           </li>
         </ul>
@@ -82,13 +133,17 @@ const Sidebar: React.FC = () => {
         {/* Workspace Views */}
         <div className="mt-4 border-t pt-4">
           <div className="mb-2 px-2 text-xs font-semibold text-gray-400 dark:text-gray-300">
-            Vues de l'espace de travail
+            Workspace Views
           </div>
           <ul className="space-y-2">
             <li>
               <Link
                 to="/table"
-                className="group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+                  location.pathname === '/table'
+                    ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                    : ''
+                }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -100,20 +155,28 @@ const Sidebar: React.FC = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-table mr-3 text-gray-400 dark:text-gray-300"
+                  className={`mr-3 ${
+                    location.pathname === '/table'
+                      ? 'text-blue-600 dark:text-blue-400'
+                      : 'text-gray-400 dark:text-gray-300'
+                  }`}
                 >
                   <path d="M12 3v18" />
                   <rect width="18" height="18" x="3" y="3" rx="2" />
                   <path d="M3 9h18" />
                   <path d="M3 15h18" />
                 </svg>
-                <span>Tableau</span>
+                <span>Table</span>
               </Link>
             </li>
             <li>
               <Link
                 to="/calendar"
-                className="group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+                  location.pathname === '/calendar'
+                    ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                    : ''
+                }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -125,14 +188,18 @@ const Sidebar: React.FC = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-calendar mr-3 text-gray-400 dark:text-gray-300"
+                  className={`mr-3 ${
+                    location.pathname === '/calendar'
+                      ? 'text-blue-600 dark:text-blue-400'
+                      : 'text-gray-400 dark:text-gray-300'
+                  }`}
                 >
                   <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                   <line x1="16" x2="16" y1="2" y2="6" />
                   <line x1="8" x2="8" y1="2" y2="6" />
                   <line x1="3" x2="21" y1="10" y2="10" />
                 </svg>
-                <span>Calendrier</span>
+                <span>Calendar</span>
               </Link>
             </li>
           </ul>
@@ -142,7 +209,7 @@ const Sidebar: React.FC = () => {
         <div className="mt-4 border-t pt-4">
           <div className="mb-2 flex items-center justify-between px-2">
             <span className="text-xs font-semibold text-gray-400 dark:text-gray-300">
-              Vos tableaux
+              Your Boards
             </span>
             <button className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100">
               <svg
@@ -155,7 +222,7 @@ const Sidebar: React.FC = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-plus"
+                className="text-gray-400 dark:text-gray-300"
               >
                 <path d="M5 12h14" />
                 <path d="M12 5v14" />
@@ -163,20 +230,29 @@ const Sidebar: React.FC = () => {
             </button>
           </div>
           <ul className="space-y-2">
-            {[
-              
-              { name: 'Ville virtuelle', color: 'bg-gray-100 dark:bg-gray-700' },
-              { name: 'Tableau Agile', color: 'bg-gray-100 dark:bg-gray-700' },
-              { name: 'Ville virtuelle', color: 'bg-gray-100 dark:bg-gray-700' },
-            
-            ].map((board) => (
-              <li key={board.name}>
+            {dashboardData?.projects.map((project) => (
+              <li key={project.id}>
                 <Link
-                  to={`/board/${board.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                  to={`/board/${project.id}`}
+                  className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+                    location.pathname === `/board/${project.id}`
+                      ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                      : ''
+                  }`}
                 >
-                  <span className={`mr-3 size-6 rounded ${board.color}`}></span>
-                  <span>{board.name}</span>
+                  <span
+                    className="mr-3 size-6 rounded"
+                    style={{
+                      background: project.backgroundImage
+                        ? `url(${project.backgroundImage}) center/cover`
+                        : project.backgroundColor
+                        ? project.backgroundColor
+                        : project.modelId && project.modelBackgroundImage
+                        ? `url(${project.modelBackgroundImage}) center/cover`
+                        : 'bg-gray-100 dark:bg-gray-700',
+                    }}
+                  ></span>
+                  <span>{project.name}</span>
                 </Link>
               </li>
             ))}
@@ -203,7 +279,7 @@ const Sidebar: React.FC = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="ml-3 text-white dark:text-white">Essayer Premium</span>
+              <span className="ml-3 text-white dark:text-white">Try Premium</span>
             </a>
           </li>
         </ul>

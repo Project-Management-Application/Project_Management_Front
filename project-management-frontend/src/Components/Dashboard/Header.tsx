@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { initFlowbite } from 'flowbite';
+import taskifyLogo from '../../assets/images/taskify-logo.png'; 
+import userAvatar from '../../assets/images/user.jpg'; 
 
 const Header: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem('theme') === 'dark' || 
-           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    return (
+      localStorage.getItem('theme') === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
   });
   const [, setIsSidebarOpen] = useState<boolean>(true);
 
@@ -38,15 +42,14 @@ const Header: React.FC = () => {
   };
 
   const notifications = [
-    { id: 1, message: 'Nouvelle tâche assignée', time: 'Il y a 5 min', read: false },
-    { id: 2, message: 'Réunion de projet à 14h', time: 'Il y a 30 min', read: true },
-    { id: 3, message: 'Tableau mis à jour', time: 'Hier', read: true },
+    { id: 1, message: 'New task assigned', time: '5 minutes ago', read: false },
+    { id: 2, message: 'Project meeting at 2 PM', time: '30 minutes ago', read: true },
+    { id: 3, message: 'Board updated', time: 'Yesterday', read: true },
   ];
 
   return (
     <header className="antialiased">
-    <nav className="border-b border-gray-300 bg-white px-4 py-2.5 dark:border-gray-700 dark:bg-gray-800 lg:px-6">
-
+      <nav className="border-b border-gray-300 bg-white px-4 py-2.5 dark:border-gray-700 dark:bg-gray-800 lg:px-6">
         <div className="flex items-center justify-between">
           {/* Left Section */}
           <div className="flex items-center justify-start">
@@ -74,9 +77,9 @@ const Header: React.FC = () => {
             </button>
 
             {/* Logo */}
-            <a href="" className="ml-4 mr-6 flex items-center ">
+            <a href="/" className="ml-4 mr-6 flex items-center">
               <img
-                src="src/assets/images/taskify-logo.png"
+                src={taskifyLogo}
                 className="mr-3 h-6 sm:h-9"
                 alt="Taskify Logo"
               />
@@ -88,7 +91,7 @@ const Header: React.FC = () => {
             {/* Search Bar */}
             <form action="#" method="GET" className="pl-2">
               <label htmlFor="topbar-search" className="sr-only">
-                Rechercher
+                Search
               </label>
               <div className="relative w-96">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -113,7 +116,7 @@ const Header: React.FC = () => {
                   name="search"
                   id="topbar-search"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-9 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 sm:text-sm"
-                  placeholder="Rechercher des projets"
+                  placeholder="Search projects"
                 />
               </div>
             </form>
@@ -121,29 +124,7 @@ const Header: React.FC = () => {
 
           {/* Right Section */}
           <div className="flex items-center">
-            {/* Invite Workspace Members Button */}
-            
-  <button
-    type="button"
-    className="mr-2 flex items-center justify-center rounded-lg bg-primary-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-  >
-    <svg
-      aria-hidden="true"
-      className="-ml-1 mr-1 size-5"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fillRule="evenodd"
-        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-        clipRule="evenodd"
-      />
-    </svg>
-    Créer un projet
-  </button>
-
-
+        
 
             {/* Notifications Button */}
             <button
@@ -161,9 +142,9 @@ const Header: React.FC = () => {
               >
                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
               </svg>
-              {notifications.some(n => !n.read) && (
+              {notifications.some((n) => !n.read) && (
                 <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                  {notifications.filter(n => !n.read).length}
+                  {notifications.filter((n) => !n.read).length}
                 </span>
               )}
             </button>
@@ -181,8 +162,8 @@ const Header: React.FC = () => {
                   <div
                     key={notification.id}
                     className={`px-4 py-3 ${
-                      !notification.read 
-                        ? 'bg-gray-100 dark:bg-gray-600' 
+                      !notification.read
+                        ? 'bg-gray-100 dark:bg-gray-600'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                   >
@@ -190,8 +171,8 @@ const Header: React.FC = () => {
                       <div className="shrink-0">
                         <svg
                           className={`size-5 ${
-                            !notification.read 
-                              ? 'text-blue-500' 
+                            !notification.read
+                              ? 'text-blue-500'
                               : 'text-gray-400 dark:text-gray-500'
                           }`}
                           fill="currentColor"
@@ -217,7 +198,7 @@ const Header: React.FC = () => {
                 href="#"
                 className="block py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600"
               >
-                Voir toutes les notifications
+                View All Notifications
               </a>
             </div>
 
@@ -229,18 +210,17 @@ const Header: React.FC = () => {
               aria-expanded="false"
               data-dropdown-toggle="dropdown"
             >
-              <span className="sr-only">Ouvrir le menu utilisateur</span>
+              <span className="sr-only">Open User Menu</span>
               <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-gray-500 text-white">
-                <img 
-                  src="src/assets/images/user.jpg" 
-                  alt="User Avatar" 
+                <img
+                  src={userAvatar} // Use imported variable
+                  alt="User Avatar"
                   className="size-full rounded-full"
                 />
               </div>
             </button>
 
-
-            {/* User Dropdown  */}
+            {/* User Dropdown */}
             <div
               className="z-50 my-4 hidden w-64 list-none divide-y divide-gray-100 rounded bg-white text-base shadow dark:divide-gray-600 dark:bg-gray-700"
               id="dropdown"
@@ -260,7 +240,7 @@ const Header: React.FC = () => {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Changer de compte
+                    Switch Account
                   </a>
                 </li>
                 <li>
@@ -268,28 +248,25 @@ const Header: React.FC = () => {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Gérer le compte
+                    Manage Account
                   </a>
                 </li>
               </ul>
-              {/* Trello Section */}
+              {/* Settings Section */}
               <ul className="py-1">
-            
-              
-              
                 <li>
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Paramètres
+                    Settings
                   </a>
                 </li>
               </ul>
               {/* Theme Section */}
               <ul className="py-1">
                 <li className="px-4 py-2">
-                  <span className="block text-sm text-gray-700 dark:text-gray-400">Thème</span>
+                  <span className="block text-sm text-gray-700 dark:text-gray-400">Theme</span>
                   <div className="mt-2 space-y-2">
                     <button
                       onClick={() => toggleDarkMode('light')}
@@ -310,7 +287,7 @@ const Header: React.FC = () => {
                       >
                         <path d="M10 2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 10 2Zm0 13a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 1 .5-.5ZM15.258 4.742a.5.5 0 0 1 .707 0l.707.707a.5.5 0 0 1-0.707.707l-.707-.707a.5.5 0 0 1 0-.707Zm-10.516 10.516a.5.5 0 0 1 .707 0l.707.707a.5.5 0 0 1-.707.707l-.707-.707a.5.5 0 0 1 0-.707ZM17.5 9.5h-1a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1Zm-13 0h-1a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1ZM15.258 15.258a.5.5 0 0 1 0-.707l.707-.707a.5.5 0 0 1 .707.707l-.707.707a.5.5 0 0 1-.707 0Zm-10.516-10.516a.5.5 0 0 1 0-.707l.707-.707a.5.5 0 0 1 .707.707l-.707.707a.5.5 0 0 1-.707 0ZM10 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" />
                       </svg>
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-400">Clair</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-400">Light</span>
                     </button>
                     <button
                       onClick={() => toggleDarkMode('dark')}
@@ -331,21 +308,19 @@ const Header: React.FC = () => {
                       >
                         <path d="M17.8 13.75a1 1 0 0 0-.859-.5A7.488 7.488 0 0 1 10.52 2a1 1 0 0 0 0-.969A1.035 1.035 0 0 0 9.687.5h-.113a9.5 9.5 0 1 0 8.222 14.247 1 1 0 0 0 .004-.997Z" />
                       </svg>
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-400">Sombre</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-400">Dark</span>
                     </button>
                   </div>
                 </li>
               </ul>
               {/* Bottom Section */}
               <ul className="py-1">
-              
-              
                 <li>
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Déconnexion
+                    Sign Out
                   </a>
                 </li>
               </ul>
