@@ -22,7 +22,7 @@ function LoginPage() {
     try {
       const hasWorkspace = await checkUserWorkspace();
       if (hasWorkspace) {
-        navigate("/dashboard");
+        navigate("/dashboard/projects");
       } else {
         navigate("/setup");
       }

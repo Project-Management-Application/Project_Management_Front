@@ -96,14 +96,14 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link
-              to="/members"
-              className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
-                location.pathname === '/members'
-                  ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
-                  : ''
-              }`}
-            >
+          <Link
+    to="/dashboard/members"
+    className={`group flex items-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 ${
+      location.pathname === '/dashboard/members' // Fixed condition
+        ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+        : ''
+    }`}
+  >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"

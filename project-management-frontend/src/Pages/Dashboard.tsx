@@ -1,12 +1,21 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate, Outlet, useLocation } from 'react-router-dom'; // Add useLocation
 import Header from '../Components/Dashboard/Header';
 import Sidebar from '../Components/Dashboard/SideBar';
-import Projects from '../Components/Dashboard/Projects';
 
 function Dashboard() {
   const headerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation(); // To check the current path
+  const isInitialMount = useRef(true); // Flag for initial mount
 
   useEffect(() => {
+    // Only navigate to /dashboard/projects on the initial mount
+    if (isInitialMount.current && location.pathname === '/Dashboard') {
+      navigate('/dashboard/projects', { replace: true });
+      isInitialMount.current = false; // Set to false after first navigation
+    }
+
     const updateHeaderHeight = () => {
       if (headerRef.current) {
         const headerHeight = headerRef.current.offsetHeight;
@@ -18,7 +27,7 @@ function Dashboard() {
     window.addEventListener('resize', updateHeaderHeight);
 
     return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, []);
+  }, [navigate, location.pathname]); // Depend on location.pathname
 
   return (
     <div className="flex h-screen flex-col bg-gray-800 dark:bg-gray-800">
@@ -39,7 +48,7 @@ function Dashboard() {
           className="ml-64 flex-1 overflow-y-auto bg-white p-6 dark:bg-gray-800"
           style={{ height: 'calc(100vh - var(--header-height))' }}
         >
-          <Projects />
+          <Outlet />
         </main>
       </div>
     </div>
