@@ -25,7 +25,8 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
   const [tasks, setTasks] = useState<Task[]>(sprint?.tasks || backlog?.tasks || []);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(sprint ? `Sprint ${sprint.sprintId}` : "Backlog");
-
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
