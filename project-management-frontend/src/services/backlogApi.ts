@@ -50,14 +50,13 @@ export const updateSprintTitle = async (sprintId: number, title: string): Promis
 
 export const deleteSprint = async (sprintId: number): Promise<void> => {
     try {
-        await axios.delete(`${API_URL}/api/v1/deleteSprint`, {
-            data: { sprintId }, // ✅ Sending sprintId in the request body
-        });
+        await axios.delete(`${API_URL}/api/v1/deleteSprint/${sprintId}`); // ✅ Sending sprintId in the URL
         console.log("Sprint deleted:", sprintId);
     } catch (error) {
         throw new Error("Error deleting sprint");
     }
 };
+
 
 export const updateTaskLabel = async (taskId: number, label: string): Promise<void> => {
     try {
@@ -65,6 +64,15 @@ export const updateTaskLabel = async (taskId: number, label: string): Promise<vo
         console.log("Task label updated:", label);
     } catch (error) {
         throw new Error("Error updating task label");
+    }
+};
+
+export const updateTaskTitle = async (taskId: number, title: string): Promise<void> => {
+    try {
+        await axios.patch(`${API_URL}/api/v1/updateTaskTitle`, { taskId, title });
+        console.log("Task title updated:", title);
+    } catch (error) {
+        throw new Error("Error updating task title");
     }
 };
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Task } from "../../types/backlog";
 import { Checkbox, TextInput, Select } from "flowbite-react";
 import { updateTaskLabel } from "../../services/backlogApi";
+import TaskModal from "./TaskModal";
 
 const TASK_STATUSES = [
   { label: "TO DO", value: "TODO" },
@@ -12,12 +13,21 @@ const TASK_STATUSES = [
 type TaskListProps = {
   tasks: Task[];
   onAddTask: (title: string) => void;
-  onUpdateTaskLabel: (taskId: number, newStatus: string) => void; // ✅ New prop
+  onUpdateTaskLabel: (taskId: number, newStatus: string) => void;
+  onUpdateTaskTitle: (taskId: number, newTitle: string) => void;
+  onUpdateTaskDescription: (taskId: number, newDescription: string) => void;
 };
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask, onUpdateTaskLabel }) => {
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  onAddTask,
+  onUpdateTaskLabel,
+  onUpdateTaskTitle,
+  onUpdateTaskDescription,
+}) => {
   const [newTask, setNewTask] = useState<string>("");
   const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleAddTask = () => {
     if (!newTask.trim()) return;
@@ -35,7 +45,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask, onUpdateTaskLabel
   const handleStatusChange = async (taskId: number, newStatus: string) => {
     try {
       await updateTaskLabel(taskId, newStatus);
-      onUpdateTaskLabel(taskId, newStatus); // ✅ Update parent state
+      onUpdateTaskLabel(taskId, newStatus);
     } catch (error) {
       console.error("Error updating task label:", error);
     }
@@ -46,7 +56,14 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask, onUpdateTaskLabel
       {tasks.map((task) => (
         <div key={task.taskId} className="flex items-center p-3 gap-4">
           <Checkbox />
-          <span className="text-sm font-medium text-gray-700 flex-1">{task.title}</span>
+
+          <span
+            className="text-sm font-medium text-gray-700 flex-1 cursor-pointer"
+            onClick={() => setSelectedTask(task)}
+          >
+            {task.title}
+          </span>
+
           <Select
             value={task.label}
             onChange={(e) => handleStatusChange(task.taskId!, e.target.value)}
@@ -74,6 +91,18 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onAddTask, onUpdateTaskLabel
         <button onClick={() => setIsCreating(true)} className="text-blue-500 text-sm w-full text-left">
           + Créer un task
         </button>
+      )}
+
+      {selectedTask && (
+        <TaskModal
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          taskId={selectedTask.taskId!}
+          taskTitle={selectedTask.title}
+          taskDescription={selectedTask.description || ""}
+          onSaveTitle={(newTitle) => onUpdateTaskTitle(selectedTask.taskId!, newTitle)}
+          onSaveDescription={(newDesc) => onUpdateTaskDescription(selectedTask.taskId!, newDesc)}
+        />
       )}
     </div>
   );

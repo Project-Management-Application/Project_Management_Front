@@ -39,6 +39,7 @@ export interface Checklist{
 export interface ChecklistItem{
   checklistItemId?: number;
   title: string;
+  checked: boolean
   checklist?: Checklist;
 }
 
