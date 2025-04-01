@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authenticate, googleAuthenticate } from "../services/authApi";
+import { authenticate, googleAuthenticate } from "../services/api";
+import { checkUserWorkspace } from "../services/Workspace-apis";
 import { AuthenticationRequest } from "../types/auth";
 import loginImage from "../assets/images/login.png";
 import { Link } from "react-router-dom";
@@ -12,8 +14,24 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false); // Track script loading
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const navigate = useNavigate();
+
+  // Check workspace after successful login
+  const checkAndRedirect = async () => {
+    try {
+      const hasWorkspace = await checkUserWorkspace();
+      if (hasWorkspace) {
+        navigate("/dashboard/projects");
+      } else {
+        navigate("/setup");
+      }
+    } catch (err) {
+      // Log the error for debugging but still redirect to setup as fallback
+      console.error("Error checking workspace:", err);
+      navigate("/setup");
+    }
+  };
 
   // Load Google Identity Services SDK
   useEffect(() => {
@@ -25,11 +43,19 @@ function LoginPage() {
       script.src = "https://accounts.google.com/gsi/client";
       script.async = true;
       script.defer = true;
-      script.onload = () => setIsGoogleLoaded(true); // Mark script as loaded
+      script.onload = () => setIsGoogleLoaded(true);
       document.body.appendChild(script);
     } else {
-      setIsGoogleLoaded(true); // Already loaded
+      setIsGoogleLoaded(true);
     }
+
+    // Cleanup function to remove script if component unmounts
+    return () => {
+      const script = document.getElementById(scriptId);
+      if (script) {
+        document.body.removeChild(script);
+      }
+    };
   }, []);
 
   // Handle email/password login
@@ -42,9 +68,9 @@ function LoginPage() {
     try {
       const response = await authenticate(requestData);
       localStorage.setItem("token", response.token);
-      navigate("/dashboard");
-    } catch (err) {
-      setError("Invalid email or password");
+      await checkAndRedirect();
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password");
     }
   };
 
@@ -57,18 +83,18 @@ function LoginPage() {
 
     google.accounts.id.initialize({
       client_id: GOOGLE_ID,
-      callback: async (response) => {
+      callback: async (response: any) => {
         try {
           const authResponse = await googleAuthenticate(response.credential);
           localStorage.setItem("token", authResponse.token);
-          navigate("/dashboard");
-        } catch (error) {
-          setError("Google authentication failed");
+          await checkAndRedirect();
+        } catch (error: any) {
+          setError(error.message || "Google authentication failed");
         }
       },
     });
 
-    google.accounts.id.prompt(); // Show Google sign-in popup
+    google.accounts.id.prompt();
   };
 
   return (
@@ -86,7 +112,7 @@ function LoginPage() {
             <button
               className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-3 text-gray-900 shadow-sm transition hover:bg-gray-200 disabled:opacity-50"
               onClick={handleGoogleLogin}
-              disabled={!isGoogleLoaded} // Disable if script is not loaded
+              disabled={!isGoogleLoaded}
             >
               <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" className="size-5" />
               Sign in with Google
@@ -139,7 +165,7 @@ function LoginPage() {
             </button>
 
             <p className="text-center text-base text-gray-500">
-              Don’t have an account? <Link to="/registration" className="text-blue-500 hover:underline">Sign up</Link>
+              Don't have an account? <Link to="/registration" className="text-blue-500 hover:underline">Sign up</Link>
             </p>
           </form>
         </div>
