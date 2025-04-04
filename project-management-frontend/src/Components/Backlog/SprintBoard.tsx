@@ -4,29 +4,34 @@ import { Button } from "flowbite-react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
 import { Sprint, Backlog, Task } from "../../types/backlog";
 import { createTask, updateSprintTitle, deleteSprint } from "../../services/backlogApi";
-import TaskList from "./TaskList"; // ✅ Import TaskList
+import TaskList from "./TaskList";
+import { motion } from "framer-motion";
 
 type SprintBoardProps = {
   sprint?: Sprint;
   backlog?: Backlog;
-  onCreateSprint?: () => void;
   onTaskCreate?: (newTask: Task) => void;
-  onDeleteSprint?: (sprintId: number) => void; // ✅ Added prop for deleting sprint
+  onDeleteSprint?: (sprintId: number) => void;
+  isBacklog?: boolean;
 };
 
 const SprintBoard: React.FC<SprintBoardProps> = ({
   sprint,
   backlog,
-  onCreateSprint,
   onTaskCreate,
   onDeleteSprint,
+  isBacklog = false,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Task[]>(sprint?.tasks || backlog?.tasks || []);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(sprint ? `Sprint ${sprint.sprintId}` : "Backlog");
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
+
+  const handleDeleteTask = (taskId: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.taskId !== taskId));
+  };
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -64,8 +69,7 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
     if (!sprint) return;
     try {
       await deleteSprint(sprint.sprintId!);
-      console.log(`Sprint ${sprint.sprintId} deleted!`);
-      onDeleteSprint?.(sprint.sprintId!); // Notify parent component
+      onDeleteSprint?.(sprint.sprintId!);
     } catch (error) {
       console.error("Error deleting sprint:", error);
     }
@@ -79,49 +83,109 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
     );
   };
 
+  const handleUpdateTaskTitle = (taskId: number, newTitle: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.taskId === taskId ? { ...task, title: newTitle } : task
+      )
+    );
+  };
+
+  const handleUpdateTaskDescription = (taskId: number, newDescription: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.taskId === taskId ? { ...task, description: newDescription } : task
+      )
+    );
+  };
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-2xl mx-auto mt-4">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <HiChevronDown className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
-          
-          {backlog && !sprint ? (
-            <h2 className="text-lg font-semibold">Backlog</h2>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`bg-dark-card backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-neon-purple/30 hover:shadow-neon-purple/50 transition-all duration-500 font-poppins ${
+        isBacklog ? "w-full max-w-5xl mx-auto" : "w-full max-w-md"
+      }`}
+    >
+      <div
+        className={`flex ${
+          isBacklog ? "flex-col items-center" : "justify-between items-center"
+        } mb-6`}
+      >
+        <div className="flex items-center gap-4">
+          {isOpen ? (
+            <HiChevronDown
+              className="w-6 h-6 text-neon-blue cursor-pointer"
+              onClick={() => setIsOpen(!isOpen)}
+            />
           ) : (
-            isEditingTitle ? (
-              <input
-                type="text"
-                value={title}
-                onChange={handleTitleChange}
-                onBlur={handleTitleBlur}
-                onKeyDown={(e) => e.key === "Enter" && handleTitleBlur()}
-                autoFocus
-                className="border border-gray-300 rounded px-2 py-1 w-auto"
-              />
-            ) : (
-              <h2
-                className="text-lg font-semibold cursor-pointer"
-                onClick={() => setIsEditingTitle(true)}
-              >
-                {title}
-              </h2>
-            )
+            <HiChevronRight
+              className="w-6 h-6 text-neon-blue cursor-pointer"
+              onClick={() => setIsOpen(!isOpen)}
+            />
+          )}
+          {backlog && !sprint ? (
+            <h2 className="text-2xl font-semibold text-white">Backlog</h2>
+          ) : isEditingTitle ? (
+            <input
+              type="text"
+              value={title}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyDown={(e) => e.key === "Enter" && handleTitleBlur()}
+              autoFocus
+              className={`text-2xl font-semibold text-white bg-transparent border-none focus:ring-0 placeholder-gray-400 ${
+                isBacklog ? "text-center" : ""
+              }`}
+            />
+          ) : (
+            <h2
+              className="text-2xl font-semibold text-white cursor-pointer hover:text-neon-blue transition-colors duration-300"
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {title}
+            </h2>
           )}
         </div>
-      { sprint ? (
-        <div className="flex gap-2">
-          <Button color="gray" size="sm">Commencer le sprint</Button>
-          <Button color="red" size="xs" pill onClick={handleDeleteSprint}>
-            <HiTrash className="w-4 h-4" />
-          </Button>
-        </div>
-      ) : (
-        <Button color="blue" onClick={onCreateSprint}>Créer un sprint</Button>
-      )}
+        {sprint && (
+          <div className={`${isBacklog ? "mt-4" : ""} flex gap-3`}>
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-neon-blue to-neon-purple text-white border-none hover:shadow-neon-blue-glow transition-all duration-300"
+            >
+              Start Sprint
+            </Button>
+            <Button
+              size="sm"
+              pill
+              onClick={handleDeleteSprint}
+              className="bg-neon-pink hover:bg-neon-pink/80 transition-all duration-300"
+            >
+              <HiTrash className="w-5 h-5" />
+            </Button>
+          </div>
+        )}
       </div>
 
-      {isOpen && <TaskList tasks={tasks} onAddTask={handleAddTask} onUpdateTaskLabel={handleUpdateTaskLabel} />}
-    </div>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="overflow-hidden"
+      >
+        {isOpen && (
+          <TaskList
+            tasks={tasks}
+            onAddTask={handleAddTask}
+            onUpdateTaskLabel={handleUpdateTaskLabel}
+            onUpdateTaskTitle={handleUpdateTaskTitle}
+            onUpdateTaskDescription={handleUpdateTaskDescription}
+            onDeleteTask={handleDeleteTask}
+          />
+        )}
+      </motion.div>
+    </motion.div>
   );
 };
 

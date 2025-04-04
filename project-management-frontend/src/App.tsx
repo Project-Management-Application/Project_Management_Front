@@ -1,3 +1,7 @@
+import "@fontsource/montserrat/400.css";
+import "@fontsource/montserrat/500.css";
+import "@fontsource/montserrat/600.css";
+import "@fontsource/montserrat/700.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './Pages/LandingPage';
 import LoginPage from './Pages/LoginPage';
@@ -29,7 +33,7 @@ function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="members" element={<Members />} /> {/* Fixed path */}
         </Route>
-        <Route path="/backlog" element={<Backlog />} />
+        <Route path="/backlog/:projectId" element={<Backlog />} />
       </Routes>
     </Router>
   );

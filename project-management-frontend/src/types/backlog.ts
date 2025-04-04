@@ -1,25 +1,28 @@
-export interface Backlog{
-  backlogId?: number;
-  tasks?: Task[];
-  Sprints?: Sprint[];
-}
-  
-export interface Sprint {
-  sprintId?: number; 
-  backlog: Backlog;  
-  tasks?: Task[];    
-}
-
 export interface Task {
-  taskId?: number; 
-  title: string;  
-  label: string;    
-  description?: string;
+  taskId: number;
+  title: string;
+  label: string; // Assuming Label is a string like "TODO", "INPROGRESS", "DONE"
+  backlogId: number; // Direct ID from TaskResponseDTO
+  sprintId: number;  // Direct ID from TaskResponseDTO
+  description?: string; // Optional, not in DTO but might be added later
   tickets?: Ticket[];
-  backlog?: Backlog;
-  sprint?: Sprint;
   checklists?: Checklist[];
   commentSection?: CommentSection;
+  backlog?: Backlog; // Optional reference
+  sprint?: Sprint;   // Optional reference
+}
+
+export interface Backlog {
+  backlogId?: number;
+  tasks: Task[]; // Updated to use Task[]
+  Sprints?: Sprint[];
+}
+
+export interface Sprint {
+  sprintId: number;
+  title: string;
+  backlog: Backlog;
+  tasks: Task[];
 }
 
 export interface Ticket{
