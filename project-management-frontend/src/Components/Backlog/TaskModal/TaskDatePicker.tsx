@@ -7,14 +7,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 
-type TaskDatePickerProps = {
-  startDate: Date | null;
-  endDate: Date | null;
-  setStartDate: (date: Date | null) => void;
-  setEndDate: (date: Date | null) => void;
+interface TaskDatePickerProps {
+  startDate: Date | undefined; // Changed from Date | null to Date | undefined
+  endDate: Date | undefined;   // Changed from Date | null to Date | undefined
+  setStartDate: (date: Date | undefined) => void; // Adjusted to match
+  setEndDate: (date: Date | undefined) => void;   // Adjusted to match
   showDatePicker: boolean;
   setShowDatePicker: (show: boolean) => void;
-};
+}
 
 const TaskDatePicker: React.FC<TaskDatePickerProps> = ({
   startDate,
@@ -24,21 +24,19 @@ const TaskDatePicker: React.FC<TaskDatePickerProps> = ({
   showDatePicker,
   setShowDatePicker,
 }) => {
-  const formatDateRange = () => {
+  const formatDateRange = (): string => {
     if (!startDate || !endDate) return "Select dates";
-    const formattedStart = format(startDate, "MMM d");
-    const formattedEnd = format(endDate, "MMM d");
-    return `${formattedStart} - ${formattedEnd}`;
+    return `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
   };
 
   return (
     <div className="relative">
       <div
-        className="flex items-center gap-3 cursor-pointer hover:text-neon-blue transition-colors duration-300"
+        className="flex cursor-pointer items-center gap-3 transition-colors duration-300 hover:text-neon-blue"
         onClick={() => setShowDatePicker(true)}
       >
-        <HiCalendar className="w-6 h-6 text-neon-blue" />
-        <h3 className="text-lg font-extrabold text-gray-200 tracking-wide bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+        <HiCalendar className="size-6 text-neon-blue" />
+        <h3 className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-lg font-extrabold tracking-wide text-gray-200 text-transparent">
           Dates
         </h3>
       </div>
@@ -46,7 +44,7 @@ const TaskDatePicker: React.FC<TaskDatePickerProps> = ({
         type="text"
         value={formatDateRange()}
         disabled
-        className="mt-3 w-full p-3 bg-dark-bg text-gray-400 rounded-lg border border-neon-purple/30 cursor-pointer hover:border-neon-purple/50 transition-colors duration-300"
+        className="mt-3 w-full cursor-pointer rounded-lg border border-neon-purple/30 bg-dark-bg p-3 text-gray-400 transition-colors duration-300 hover:border-neon-purple/50"
         onClick={() => setShowDatePicker(true)}
       />
       <AnimatePresence>
@@ -56,41 +54,41 @@ const TaskDatePicker: React.FC<TaskDatePickerProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-20 left-0 bg-dark-bg border border-neon-purple/30 rounded-lg shadow-lg p-4 w-80 z-20"
+            className="absolute left-0 top-20 z-20 w-80 rounded-lg border border-neon-purple/30 bg-dark-bg p-4 shadow-lg"
           >
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-gray-200">Set Dates</h3>
               <button
                 onClick={() => setShowDatePicker(false)}
-                className="text-gray-400 hover:text-gray-200 transition-colors duration-300"
+                className="text-gray-400 transition-colors duration-300 hover:text-gray-200"
               >
-                <HiX className="w-5 h-5" />
+                <HiX className="size-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-300 mb-1 block">Start Date</label>
+                <label className="mb-1 block text-sm text-gray-300">Start Date</label>
                 <DatePicker
                   selected={startDate}
-                  onChange={(date: Date | null) => setStartDate(date)}
+                  onChange={(date: Date | null) => setStartDate(date ?? undefined)} // Convert null to undefined
                   selectsStart
                   startDate={startDate}
                   endDate={endDate}
                   dateFormat="MMM d, yyyy"
-                  className="w-full p-2 bg-dark-bg text-gray-200 border border-neon-purple/30 rounded-md focus:border-neon-purple/50 focus:ring-0"
+                  className="w-full rounded-md border border-neon-purple/30 bg-dark-bg p-2 text-gray-200 focus:border-neon-purple/50 focus:ring-0"
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-300 mb-1 block">End Date</label>
+                <label className="mb-1 block text-sm text-gray-300">End Date</label>
                 <DatePicker
                   selected={endDate}
-                  onChange={(date: Date | null) => setEndDate(date)}
+                  onChange={(date: Date | null) => setEndDate(date ?? undefined)} // Convert null to undefined
                   selectsEnd
                   startDate={startDate}
                   endDate={endDate}
-                  minDate={startDate}
+                  minDate={startDate} // Now correctly typed as Date | undefined
                   dateFormat="MMM d, yyyy"
-                  className="w-full p-2 bg-dark-bg text-gray-200 border border-neon-purple/30 rounded-md focus:border-neon-purple/50 focus:ring-0"
+                  className="w-full rounded-md border border-neon-purple/30 bg-dark-bg p-2 text-gray-200 focus:border-neon-purple/50 focus:ring-0"
                 />
               </div>
             </div>

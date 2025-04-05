@@ -20,26 +20,26 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
   onClose,
 }) => {
   return (
-    <div className="flex justify-between items-center mb-6">
+    <div className="mb-6 flex items-center justify-between">
       <Dialog.Title as="div" className="flex-1">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={onSaveTitle}
-          className="text-3xl font-semibold text-white bg-transparent border-none focus:ring-0 w-full placeholder-gray-400"
+          className="w-full border-none bg-transparent text-3xl font-semibold text-white placeholder:text-gray-400 focus:ring-0"
           placeholder="Task title"
         />
-        <div className="text-sm text-gray-400 mt-1">
+        <div className="mt-1 text-sm text-gray-400">
           in list{" "}
           <select
             value={status}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="bg-transparent text-neon-blue border-none focus:ring-0"
+            className="border-none bg-transparent text-neon-blue focus:ring-0"
           >
-            <option value="TODO" className="text-white bg-dark-bg">TO DO</option>
-            <option value="INPROGRESS" className="text-white bg-dark-bg">IN PROGRESS</option>
-            <option value="DONE" className="text-white bg-dark-bg">DONE</option>
+            <option value="TODO" className="bg-dark-bg text-white">TO DO</option>
+            <option value="INPROGRESS" className="bg-dark-bg text-white">IN PROGRESS</option>
+            <option value="DONE" className="bg-dark-bg text-white">DONE</option>
           </select>
         </div>
       </Dialog.Title>
@@ -47,9 +47,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
         color="gray"
         pill
         onClick={onClose}
-        className="bg-neon-purple/20 hover:bg-neon-purple/40 transition-all duration-300"
+        className="bg-neon-purple/20 transition-all duration-300 hover:bg-neon-purple/40"
       >
-        <HiX className="w-6 h-6 text-white" />
+        <HiX className="size-6 text-white" />
       </Button>
     </div>
   );

@@ -170,7 +170,7 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <HiClipboard className="w-6 h-6 text-neon-blue" />
+              <HiClipboard className="size-6 text-neon-blue" />
               {checklist.isEditing ? (
                 <input
                   type="text"
@@ -182,11 +182,11 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
                   }}
                   onBlur={() => handleSaveChecklistTitle(checklistIndex)}
                   onKeyPress={(e) => e.key === "Enter" && handleSaveChecklistTitle(checklistIndex)}
-                  className="text-lg font-extrabold text-gray-200 bg-dark-bg border border-neon-purple/50 rounded p-2 focus:ring-neon-purple focus:border-neon-purple"
+                  className="rounded border border-neon-purple/50 bg-dark-bg p-2 text-lg font-extrabold text-gray-200 focus:border-neon-purple focus:ring-neon-purple"
                   autoFocus
                 />
               ) : (
-                <h3 className="text-lg font-extrabold text-gray-200 tracking-wide bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+                <h3 className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-lg font-extrabold tracking-wide text-gray-200 text-transparent">
                   {checklist.title}
                 </h3>
               )}
@@ -194,15 +194,15 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
             <div className="flex gap-2">
               <button
                 onClick={() => handleEditChecklistTitle(checklistIndex)}
-                className="text-neon-blue hover:text-neon-blue/80 transition-colors duration-300"
+                className="text-neon-blue transition-colors duration-300 hover:text-neon-blue/80"
               >
-                <HiPencil className="w-5 h-5" />
+                <HiPencil className="size-5" />
               </button>
               <button
                 onClick={() => handleDeleteChecklist(checklistIndex)}
-                className="text-gray-400 hover:text-neon-pink transition-colors duration-300"
+                className="text-gray-400 transition-colors duration-300 hover:text-neon-pink"
               >
-                <HiTrash className="w-5 h-5" />
+                <HiTrash className="size-5" />
               </button>
             </div>
           </div>
@@ -213,7 +213,7 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 bg-dark-bg p-2 rounded-lg border border-neon-purple/20 hover:border-neon-purple/50 transition-all duration-300"
+                className="flex items-center gap-2 rounded-lg border border-neon-purple/20 bg-dark-bg p-2 transition-all duration-300 hover:border-neon-purple/50"
               >
                 <Checkbox
                   checked={item.checked}
@@ -233,13 +233,13 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
                     onKeyPress={(e) =>
                       e.key === "Enter" && handleSaveChecklistItemTitle(checklistIndex, itemIndex)
                     }
-                    className="text-sm text-gray-200 bg-dark-bg border border-neon-purple/50 rounded p-1 focus:ring-neon-purple focus:border-neon-purple flex-1"
+                    className="flex-1 rounded border border-neon-purple/50 bg-dark-bg p-1 text-sm text-gray-200 focus:border-neon-purple focus:ring-neon-purple"
                     autoFocus
                   />
                 ) : (
                   <span
-                    className={`text-sm text-gray-200 font-medium flex-1 ${
-                      item.checked ? "line-through text-gray-500" : ""
+                    className={`flex-1 text-sm font-medium text-gray-200 ${
+                      item.checked ? "text-gray-500 line-through" : ""
                     }`}
                   >
                     {item.text}
@@ -247,28 +247,28 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
                 )}
                 <button
                   onClick={() => handleEditChecklistItem(checklistIndex, itemIndex)}
-                  className="text-neon-blue hover:text-neon-blue/80 transition-colors duration-300"
+                  className="text-neon-blue transition-colors duration-300 hover:text-neon-blue/80"
                 >
-                  <HiPencil className="w-4 h-4" />
+                  <HiPencil className="size-4" />
                 </button>
                 <button
                   onClick={() => handleDeleteChecklistItem(checklistIndex, itemIndex)}
-                  className="text-red-500 hover:text-red-400 transition-colors duration-300"
+                  className="text-red-500 transition-colors duration-300 hover:text-red-400"
                 >
-                  <HiTrash className="w-4 h-4" />
+                  <HiTrash className="size-4" />
                 </button>
               </motion.div>
             ))}
           </div>
           {activeChecklistIndex === checklistIndex ? (
-            <div className="flex items-center gap-2 mt-3">
+            <div className="mt-3 flex items-center gap-2">
               <input
                 type="text"
                 value={newChecklistItem}
                 onChange={(e) => setNewChecklistItem(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleAddChecklistItem(checklistIndex)}
                 placeholder="Add an item"
-                className="flex-1 p-2 bg-dark-bg text-white border-neon-purple/30 rounded focus:ring-neon-purple focus:border-neon-purple/50"
+                className="flex-1 rounded border-neon-purple/30 bg-dark-bg p-2 text-white focus:border-neon-purple/50 focus:ring-neon-purple"
               />
               <Button
                 color="purple"
@@ -290,7 +290,7 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
           ) : (
             <button
               onClick={() => setActiveChecklistIndex(checklistIndex)}
-              className="mt-3 text-sm font-semibold text-neon-blue hover:text-neon-blue/80 transition-colors duration-300 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent"
+              className="mt-3 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-sm font-semibold text-neon-blue text-transparent transition-colors duration-300 hover:text-neon-blue/80"
             >
               Add an Item
             </button>
@@ -310,9 +310,9 @@ const TaskChecklists: React.FC<TaskChecklistsProps> = ({
             onChange={(e) => setNewChecklistTitle(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleAddChecklist()}
             placeholder="Checklist title"
-            className="w-full p-2 bg-dark-bg text-white border-neon-purple/30 rounded focus:ring-neon-purple focus:border-neon-purple/50"
+            className="w-full rounded border-neon-purple/30 bg-dark-bg p-2 text-white focus:border-neon-purple/50 focus:ring-neon-purple"
           />
-          <div className="flex gap-2 mt-2">
+          <div className="mt-2 flex gap-2">
             <Button
               color="purple"
               size="sm"

@@ -1,8 +1,9 @@
+/* eslint-disable tailwindcss/classnames-order */
 import React, { useEffect, useState, useRef } from "react";
 import SprintBoard from "../Components/Backlog/SprintBoard";
 import type { Sprint, Backlog, Task } from "../types/backlog";
 import Navbar from "../Components/Backlog/Navbar";
-import { createSprint, getBacklog, getSprints, getTasks } from "../services/backlogApi";
+import { createSprint, getBacklog, getSprints, getBacklogTasks, getSprintTasks } from "../services/backlogApi";
 import { motion } from "framer-motion";
 import { HiPlus } from "react-icons/hi";
 import { useParams } from "react-router-dom";
@@ -21,45 +22,56 @@ const Backlog: React.FC = () => {
       try {
         const backlogId = await getBacklog(parseInt(projectId));
         const fetchedSprints = await getSprints(backlogId);
-        const backlogTasks = await getTasks(backlogId);
+        const backlogTasks = await getBacklogTasks(backlogId);
+
+        const sprintsWithTasks = await Promise.all(
+          fetchedSprints.map(async (sprint) => {
+            const sprintTasks = await getSprintTasks(sprint.sprintId);
+            return {
+              sprintId: sprint.sprintId,
+              title: sprint.title,
+              backlog: { backlogId, tasks: [] },
+              tasks: sprintTasks,
+            };
+          })
+        );
 
         const newBacklog: Backlog = {
           backlogId,
-          tasks: backlogTasks.filter((task) => task.backlogId === backlogId && task.sprintId === 0),
-          Sprints: fetchedSprints.map((s) => ({
-            sprintId: s.sprintId,
-            title: s.title,
-            backlog: { backlogId, tasks: [] },
-            tasks: backlogTasks.filter((task) => task.sprintId === s.sprintId),
-          })),
+          tasks: backlogTasks,
+          Sprints: sprintsWithTasks,
         };
 
         setBacklog(newBacklog);
-        setSprints(newBacklog.Sprints || []);
+        setSprints(sprintsWithTasks);
       } catch (error) {
-        console.error("Error fetching backlog, sprints, or tasks:", error);
+        console.error("Error fetching backlog or tasks:", error);
       }
     };
 
     if (!backlog) fetchBacklogAndTasks();
   }, [backlog, projectId]);
 
-  const updateTasksInState = (tasks: Task[]) => {
-    setBacklog((prev) => {
-      if (!prev) return null;
-      const backlogTasks = tasks.filter((task) => task.backlogId === prev.backlogId && task.sprintId === 0);
-      const updatedSprints = prev.Sprints?.map((sprint) => ({
-        ...sprint,
-        tasks: tasks.filter((task) => task.sprintId === sprint.sprintId),
-      }));
-      return { ...prev, tasks: backlogTasks, Sprints: updatedSprints };
-    });
-    setSprints((prev) =>
-      prev.map((sprint) => ({
-        ...sprint,
-        tasks: tasks.filter((task) => task.sprintId === sprint.sprintId),
-      }))
-    );
+  const updateTasksInState = (updatedTasks: Task[], sprintId?: number) => {
+    if (sprintId) {
+      setSprints((prev) =>
+        prev.map((sprint) =>
+          sprint.sprintId === sprintId ? { ...sprint, tasks: updatedTasks } : sprint
+        )
+      );
+      setBacklog((prev) =>
+        prev
+          ? {
+              ...prev,
+              Sprints: prev.Sprints?.map((sprint) =>
+                sprint.sprintId === sprintId ? { ...sprint, tasks: updatedTasks } : sprint
+              ),
+            }
+          : null
+      );
+    } else {
+      setBacklog((prev) => (prev ? { ...prev, tasks: updatedTasks } : null));
+    }
   };
 
   const handleCreateSprint = async () => {
@@ -105,8 +117,8 @@ const Backlog: React.FC = () => {
         : null
     );
     if (backlog?.backlogId) {
-      const updatedTasks = await getTasks(backlog.backlogId);
-      updateTasksInState(updatedTasks);
+      const updatedTasks = await getSprintTasks(sprintId);
+      updateTasksInState(updatedTasks, sprintId);
     }
   };
 
@@ -115,7 +127,7 @@ const Backlog: React.FC = () => {
       prev ? { ...prev, tasks: [...prev.tasks, newTask] } : null
     );
     if (backlog?.backlogId) {
-      const updatedTasks = await getTasks(backlog.backlogId);
+      const updatedTasks = await getBacklogTasks(backlog.backlogId);
       updateTasksInState(updatedTasks);
     }
   };
@@ -165,7 +177,7 @@ const Backlog: React.FC = () => {
           whileTap={{ scale: 0.95 }}
           className="fixed bottom-10 right-10 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 text-lg font-semibold"
         >
-          <HiPlus className="w-6 h-6" />
+          <HiPlus className="size-6" />
           Create Sprint
         </motion.button>
       </div>

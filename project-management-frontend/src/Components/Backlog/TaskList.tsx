@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/classnames-order */
 import React, { useState } from "react";
 import { Task } from "../../types/backlog";
 import { updateTaskLabel } from "../../services/backlogApi";

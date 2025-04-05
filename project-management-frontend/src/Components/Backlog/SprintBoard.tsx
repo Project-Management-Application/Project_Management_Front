@@ -1,9 +1,12 @@
+/* eslint-disable tailwindcss/migration-from-tailwind-2 */
+/* eslint-disable tailwindcss/enforces-shorthand */
+/* eslint-disable tailwindcss/classnames-order */
 import React, { useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import { Button } from "flowbite-react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
 import { Sprint, Backlog, Task } from "../../types/backlog";
-import { createTask, updateSprintTitle, deleteSprint } from "../../services/backlogApi";
+import { createTask, updateSprintTitle, deleteSprint, startSprint } from "../../services/backlogApi";
 import TaskList from "./TaskList";
 import { motion } from "framer-motion";
 
@@ -26,7 +29,7 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
   const [tasks, setTasks] = useState<Task[]>(sprint?.tasks || backlog?.tasks || []);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(sprint ? `Sprint ${sprint.sprintId}` : "Backlog");
-
+  const [isStarted, setIsStarted] = useState<boolean>(sprint?.started || false);
 
   const handleDeleteTask = (taskId: number) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.taskId !== taskId));
@@ -72,6 +75,18 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
       onDeleteSprint?.(sprint.sprintId!);
     } catch (error) {
       console.error("Error deleting sprint:", error);
+    }
+  };
+
+  const handleStartSprint = async () => {
+    if (!sprint) return;
+    try {
+      const response = await startSprint(sprint.sprintId!);
+      setIsStarted(true);
+      console.log(response); // "Sprint started successfully"
+    } catch (error) {
+      console.error("Error starting sprint:", error);
+      alert("Failed to start sprint. Another sprint might already be active.");
     }
   };
 
@@ -144,7 +159,7 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
               className="text-2xl font-semibold text-white cursor-pointer hover:text-neon-blue transition-colors duration-300"
               onClick={() => setIsEditingTitle(true)}
             >
-              {title}
+              {title} {isStarted && <span className="text-green-400 text-sm ml-2">[Active]</span>}
             </h2>
           )}
         </div>
@@ -152,9 +167,13 @@ const SprintBoard: React.FC<SprintBoardProps> = ({
           <div className={`${isBacklog ? "mt-4" : ""} flex gap-3`}>
             <Button
               size="sm"
-              className="bg-gradient-to-r from-neon-blue to-neon-purple text-white border-none hover:shadow-neon-blue-glow transition-all duration-300"
+              onClick={handleStartSprint}
+              disabled={isStarted}
+              className={`bg-gradient-to-r from-neon-blue to-neon-purple text-white border-none hover:shadow-neon-blue-glow transition-all duration-300 ${
+                isStarted ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Start Sprint
+              {isStarted ? "Sprint Active" : "Start Sprint"}
             </Button>
             <Button
               size="sm"

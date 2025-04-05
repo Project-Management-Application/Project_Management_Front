@@ -42,8 +42,8 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [description, setDescription] = useState(initialDesc);
   const [status, setStatus] = useState(initialStatus);
   const [comments, setComments] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(new Date("2025-02-17"));
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2025-02-20"));
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showChecklistForm, setShowChecklistForm] = useState(false);
   const [showLabelDropdown, setShowLabelDropdown] = useState(false);
@@ -142,7 +142,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
-                className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-5xl max-h-[85vh] overflow-y-auto p-8 border border-indigo-500/30"
+                className="max-h-[85vh] w-full max-w-5xl overflow-y-auto rounded-xl border border-indigo-500/30 bg-gray-800 p-8 shadow-2xl"
               >
                 <TaskHeader
                   title={title}
@@ -198,7 +198,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                   <Button
                     size="sm"
                     onClick={handleDeleteTask}
-                    className="bg-indigo-500/20 hover:bg-indigo-500/40 text-white font-semibold px-4 py-1 rounded-lg transition-all duration-300"
+                    className="rounded-lg bg-indigo-500/20 px-4 py-1 font-semibold text-white transition-all duration-300 hover:bg-indigo-500/40"
                   >
                     Delete Task
                   </Button>

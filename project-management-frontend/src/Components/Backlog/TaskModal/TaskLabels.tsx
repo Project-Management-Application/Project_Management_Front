@@ -121,18 +121,18 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         {selectedTickets.map((ticket) => (
           <span
             key={ticket.ticketId}
-            className="px-3 py-1 rounded text-sm font-medium text-white"
+            className="rounded px-3 py-1 text-sm font-medium text-white"
             style={{ backgroundColor: ticket.color }}
           >
             {ticket.title}
           </span>
         ))}
         <HiPlus
-          className="w-5 h-5 text-neon-blue cursor-pointer"
+          className="size-5 cursor-pointer text-neon-blue"
           onClick={() => setShowLabelDropdown(!showLabelDropdown)}
         />
       </div>
@@ -145,29 +145,29 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-8 left-0 bg-dark-bg border border-neon-blue/50 rounded-lg shadow-lg p-4 w-80 z-20"
+            className="absolute left-0 top-8 z-20 w-80 rounded-lg border border-neon-blue/50 bg-dark-bg p-4 shadow-lg"
           >
             <input
               type="text"
               placeholder="Search tickets..."
-              className="w-full p-2 mb-4 bg-dark-card text-white border border-neon-blue/50 rounded focus:ring-neon-blue focus:border-neon-blue"
+              className="mb-4 w-full rounded border border-neon-blue/50 bg-dark-card p-2 text-white focus:border-neon-blue focus:ring-neon-blue"
             />
-            <div className="space-y-3 max-h-48 overflow-y-auto">
+            <div className="max-h-48 space-y-3 overflow-y-auto">
               {tickets.map((ticket) => (
                 <div key={ticket.ticketId} className="flex items-center gap-3">
                   <Checkbox
                     checked={selectedTickets.some((t) => t.ticketId === ticket.ticketId)}
                     onChange={() => handleToggleTicket(ticket)}
-                    className="text-neon-blue focus:ring-neon-blue w-5 h-5"
+                    className="size-5 text-neon-blue focus:ring-neon-blue"
                   />
                   <span
-                    className="flex-1 px-4 py-2 rounded-lg text-base font-semibold text-white shadow-md"
+                    className="flex-1 rounded-lg px-4 py-2 text-base font-semibold text-white shadow-md"
                     style={{ backgroundColor: ticket.color }}
                   >
                     {ticket.title}
                   </span>
                   <HiPencil
-                    className="w-5 h-5 text-neon-blue cursor-pointer hover:text-neon-blue/80"
+                    className="size-5 cursor-pointer text-neon-blue hover:text-neon-blue/80"
                     onClick={() => {
                       setModifyTicket(ticket);
                       setNewTicketTitle(ticket.title);
@@ -177,7 +177,7 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                     }}
                   />
                   <HiTrash
-                    className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-400"
+                    className="size-5 cursor-pointer text-red-500 hover:text-red-400"
                     onClick={() => handleDeleteTicket(ticket.ticketId)}
                   />
                 </div>
@@ -188,7 +188,7 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                 setShowLabelDropdown(false);
                 setShowCreateTicketForm(true);
               }}
-              className="mt-4 w-full text-left text-neon-blue hover:text-neon-blue/80 transition-colors duration-300 text-sm font-medium"
+              className="mt-4 w-full text-left text-sm font-medium text-neon-blue transition-colors duration-300 hover:text-neon-blue/80"
             >
               Create a new ticket
             </button>
@@ -202,9 +202,9 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-8 left-0 bg-dark-bg border border-neon-blue/50 rounded-lg shadow-lg p-4 w-72 z-20"
+            className="absolute left-0 top-8 z-20 w-72 rounded-lg border border-neon-blue/50 bg-dark-bg p-4 shadow-lg"
           >
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-white">Create ticket</h3>
               <button
                 onClick={() => {
@@ -213,12 +213,12 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                 }}
                 className="text-gray-400 hover:text-gray-300"
               >
-                <HiX className="w-5 h-5" />
+                <HiX className="size-5" />
               </button>
             </div>
             <div className="mb-4">
               <div
-                className="w-full h-8 rounded mb-2"
+                className="mb-2 h-8 w-full rounded"
                 style={{ backgroundColor: newTicketColor }}
               />
               <label className="text-sm text-gray-300">Title</label>
@@ -226,16 +226,16 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                 type="text"
                 value={newTicketTitle}
                 onChange={(e) => setNewTicketTitle(e.target.value)}
-                className="w-full p-2 mt-1 bg-dark-bg text-white border border-neon-blue/50 rounded focus:ring-neon-blue focus:border-neon-blue"
+                className="mt-1 w-full rounded border border-neon-blue/50 bg-dark-bg p-2 text-white focus:border-neon-blue focus:ring-neon-blue"
               />
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-300">Select a color</label>
-              <div className="grid grid-cols-6 gap-2 mt-2">
+              <div className="mt-2 grid grid-cols-6 gap-2">
                 {colorOptions.map((color) => (
                   <button
                     key={color.code}
-                    className={`w-8 h-8 rounded border-2 ${
+                    className={`size-8 rounded border-2 ${
                       newTicketColor === color.code ? "border-neon-blue" : "border-transparent"
                     }`}
                     style={{ backgroundColor: color.code }}
@@ -248,7 +248,7 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
             <Button
               color="blue"
               size="sm"
-              className="w-full bg-neon-blue hover:bg-neon-blue/80 transition-all duration-300"
+              className="w-full bg-neon-blue transition-all duration-300 hover:bg-neon-blue/80"
               onClick={handleCreateTicket}
             >
               Create
@@ -263,9 +263,9 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-8 left-0 bg-dark-bg border border-neon-blue/50 rounded-lg shadow-lg p-4 w-72 z-20"
+            className="absolute left-0 top-8 z-20 w-72 rounded-lg border border-neon-blue/50 bg-dark-bg p-4 shadow-lg"
           >
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-white">Modify ticket</h3>
               <button
                 onClick={() => {
@@ -274,12 +274,12 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                 }}
                 className="text-gray-400 hover:text-gray-300"
               >
-                <HiX className="w-5 h-5" />
+                <HiX className="size-5" />
               </button>
             </div>
             <div className="mb-4">
               <div
-                className="w-full h-8 rounded mb-2"
+                className="mb-2 h-8 w-full rounded"
                 style={{ backgroundColor: newTicketColor }}
               />
               <label className="text-sm text-gray-300">Title</label>
@@ -287,16 +287,16 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
                 type="text"
                 value={newTicketTitle}
                 onChange={(e) => setNewTicketTitle(e.target.value)}
-                className="w-full p-2 mt-1 bg-dark-bg text-white border border-neon-blue/50 rounded focus:ring-neon-blue focus:border-neon-blue"
+                className="mt-1 w-full rounded border border-neon-blue/50 bg-dark-bg p-2 text-white focus:border-neon-blue focus:ring-neon-blue"
               />
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-300">Select a color</label>
-              <div className="grid grid-cols-6 gap-2 mt-2">
+              <div className="mt-2 grid grid-cols-6 gap-2">
                 {colorOptions.map((color) => (
                   <button
                     key={color.code}
-                    className={`w-8 h-8 rounded border-2 ${
+                    className={`size-8 rounded border-2 ${
                       newTicketColor === color.code ? "border-neon-blue" : "border-transparent"
                     }`}
                     style={{ backgroundColor: color.code }}
@@ -309,7 +309,7 @@ const TaskLabels: React.FC<TaskLabelsProps> = ({ taskId, showLabelDropdown, setS
             <Button
               color="blue"
               size="sm"
-              className="w-full bg-neon-blue hover:bg-neon-blue/80 transition-all duration-300"
+              className="w-full bg-neon-blue transition-all duration-300 hover:bg-neon-blue/80"
               onClick={handleModifyTicket}
             >
               Save

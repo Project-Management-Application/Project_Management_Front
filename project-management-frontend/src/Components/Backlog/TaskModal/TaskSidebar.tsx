@@ -26,50 +26,50 @@ const TaskSidebar: React.FC<TaskSidebarProps> = ({
   return (
     <div className="col-span-1 space-y-6">
       <div>
-        <h3 className="text-lg font-extrabold text-gray-200 mb-4 tracking-wide uppercase bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+        <h3 className="mb-4 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-lg font-extrabold uppercase tracking-wide text-gray-200 text-transparent">
           Add to Card
         </h3>
         <div className="space-y-4">
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={() => console.log("Members clicked - implement as needed")}
           >
-            <HiUser className="w-5 h-5" />
+            <HiUser className="size-5" />
             Members
           </button>
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={onShowLabels}
           >
-            <HiTag className="w-5 h-5" />
+            <HiTag className="size-5" />
             Labels
           </button>
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={onShowChecklist}
           >
-            <HiClipboard className="w-5 h-5" />
+            <HiClipboard className="size-5" />
             Checklist
           </button>
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={onShowDatePicker}
           >
-            <HiClock className="w-5 h-5" />
+            <HiClock className="size-5" />
             Dates
           </button>
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={handleShowAttachment}
           >
-            <HiPaperClip className="w-5 h-5" />
+            <HiPaperClip className="size-5" />
             Attachment
           </button>
           <button
-            className="flex items-center gap-2 w-full text-left text-gray-300 hover:text-neon-blue transition-all duration-300"
+            className="flex w-full items-center gap-2 text-left text-gray-300 transition-all duration-300 hover:text-neon-blue"
             onClick={handleShowCover}
           >
-            <HiPhotograph className="w-5 h-5" />
+            <HiPhotograph className="size-5" />
             Cover
           </button>
         </div>

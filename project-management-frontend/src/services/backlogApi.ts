@@ -309,20 +309,31 @@ export const getSprints = async (backlogId: number): Promise<{ sprintId: number;
   }
 };
 
-export const getTasks = async (id: number): Promise<Task[]> => {
+export const getBacklogTasks = async (backlogId: number): Promise<Task[]> => {
   try {
-    const response = await axios.get(`${API_URL}/api/v1/getTasks/${id}`);
-    return response.data.map((task: any) => ({
-      taskId: task.taskId,
-      title: task.title,
-      label: task.label,
-      backlogId: task.backlogId,
-      sprintId: task.sprintId,
-    }));
+    const response = await axios.get(`${API_URL}/api/v1/getBacklogTasks/${backlogId}`);
+    return response.data;
   } catch (error) {
-    throw new Error(`Error fetching tasks for ID ${id}`);
+    throw new Error(`Error fetching backlog tasks for backlog ${backlogId}`);
   }
 };
 
+export const getSprintTasks = async (sprintId: number): Promise<Task[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/api/v1/getSprintTasks/${sprintId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error fetching sprint tasks for sprint ${sprintId}`);
+  }
+};
 
+export const startSprint = async (sprintId: number): Promise<string> => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/startSprint/${sprintId}`);
+    console.log("Sprint started:", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Error starting sprint");
+  }
+};
 

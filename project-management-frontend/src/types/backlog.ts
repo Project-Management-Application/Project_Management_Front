@@ -2,8 +2,8 @@ export interface Task {
   taskId: number;
   title: string;
   label: string; // Assuming Label is a string like "TODO", "INPROGRESS", "DONE"
-  backlogId: number; // Direct ID from TaskResponseDTO
-  sprintId: number;  // Direct ID from TaskResponseDTO
+  backlogId?: number; // Direct ID from TaskResponseDTO
+  sprintId?: number;  // Direct ID from TaskResponseDTO
   description?: string; // Optional, not in DTO but might be added later
   tickets?: Ticket[];
   checklists?: Checklist[];
@@ -23,6 +23,7 @@ export interface Sprint {
   title: string;
   backlog: Backlog;
   tasks: Task[];
+  started?: boolean; // Add this new property
 }
 
 export interface Ticket{

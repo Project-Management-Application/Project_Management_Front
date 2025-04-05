@@ -25,7 +25,7 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
 
   return (
     <div>
-      <h3 className="text-lg font-extrabold text-gray-200 tracking-wide bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+      <h3 className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-lg font-extrabold tracking-wide text-gray-200 text-transparent">
         Description
       </h3>
       {isEditing ? (
@@ -38,13 +38,13 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({
             setIsEditing(false);
           }}
           placeholder="Add a more detailed description..."
-          className="mt-3 w-full bg-dark-bg text-white border-neon-purple/30 focus:ring-neon-purple focus:border-neon-purple/50"
+          className="mt-3 w-full border-neon-purple/30 bg-dark-bg text-white focus:border-neon-purple/50 focus:ring-neon-purple"
           rows={4}
           autoFocus
         />
       ) : (
         <p
-          className="mt-3 text-gray-300 cursor-pointer hover:text-gray-100 transition-colors duration-300"
+          className="mt-3 cursor-pointer text-gray-300 transition-colors duration-300 hover:text-gray-100"
           onClick={() => setIsEditing(true)}
         >
           {description || "Click to add a description..."}
