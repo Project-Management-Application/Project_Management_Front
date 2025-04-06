@@ -103,7 +103,7 @@ const SetupPage: React.FC = () => {
       setAlert({ ...alert, show: false });
       setShowConfetti(false);
       setCurrentStep('invite');
-    }, 8000);
+    }, 3500);
   };
 
   const setLoadingState = (loading: boolean) => {
