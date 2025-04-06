@@ -1,13 +1,14 @@
+/* eslint-disable tailwindcss/classnames-order */
 import React, { useState } from "react";
 import { Task } from "../../types/backlog";
-import { Checkbox, TextInput, Select } from "flowbite-react";
 import { updateTaskLabel } from "../../services/backlogApi";
-import TaskModal from "./TaskModal";
+import TaskModal from "./TaskModal/TaskModal";
+import { motion } from "framer-motion";
 
 const TASK_STATUSES = [
-  { label: "TO DO", value: "TODO" },
-  { label: "IN PROGRESS", value: "INPROGRESS" },
-  { label: "DONE", value: "DONE" }
+  { label: "To Do", value: "TODO" },
+  { label: "In Progress", value: "INPROGRESS" },
+  { label: "Done", value: "DONE" },
 ];
 
 type TaskListProps = {
@@ -16,6 +17,7 @@ type TaskListProps = {
   onUpdateTaskLabel: (taskId: number, newStatus: string) => void;
   onUpdateTaskTitle: (taskId: number, newTitle: string) => void;
   onUpdateTaskDescription: (taskId: number, newDescription: string) => void;
+  onDeleteTask?: (taskId: number) => void;
 };
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -24,9 +26,10 @@ const TaskList: React.FC<TaskListProps> = ({
   onUpdateTaskLabel,
   onUpdateTaskTitle,
   onUpdateTaskDescription,
+  onDeleteTask,
 }) => {
-  const [newTask, setNewTask] = useState<string>("");
-  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [newTask, setNewTask] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleAddTask = () => {
@@ -37,9 +40,7 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleAddTask();
-    }
+    if (e.key === "Enter") handleAddTask();
   };
 
   const handleStatusChange = async (taskId: number, newStatus: string) => {
@@ -52,44 +53,48 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   return (
-    <div>
+    <div className="space-y-4">
       {tasks.map((task) => (
-        <div key={task.taskId} className="flex items-center p-3 gap-4">
-          <Checkbox />
-
-          <span
-            className="text-sm font-medium text-gray-700 flex-1 cursor-pointer"
-            onClick={() => setSelectedTask(task)}
-          >
-            {task.title}
-          </span>
-
-          <Select
+        <motion.div
+          key={task.taskId}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center p-4 gap-4 bg-gray-700 rounded-lg border border-indigo-500/30 hover:border-indigo-500/70 transition-all duration-300 cursor-pointer"
+          onClick={() => setSelectedTask(task)}
+        >
+          <span className="text-lg font-semibold text-white flex-1">{task.title}</span>
+          <select
             value={task.label}
             onChange={(e) => handleStatusChange(task.taskId!, e.target.value)}
-            className="w-40 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ml-auto"
+            className="w-40 text-lg bg-gray-800 text-white border border-indigo-500/50 rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"
+            onClick={(e) => e.stopPropagation()}
           >
             {TASK_STATUSES.map((status) => (
-              <option key={status.value} value={status.value}>
+              <option key={status.value} value={status.value} className="bg-gray-800 text-white">
                 {status.label}
               </option>
             ))}
-          </Select>
-        </div>
+          </select>
+        </motion.div>
       ))}
 
       {isCreating ? (
-        <TextInput
+        <input
+          type="text"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Nom du task"
-          className="mb-2 w-full"
+          placeholder="Add a task..."
+          className="w-full rounded-lg bg-gray-800 text-white border-indigo-500/50 focus:ring-indigo-500 focus:border-indigo-500 p-3 text-lg"
           autoFocus
         />
       ) : (
-        <button onClick={() => setIsCreating(true)} className="text-blue-500 text-sm w-full text-left">
-          + Créer un task
+        <button
+          onClick={() => setIsCreating(true)}
+          className="text-indigo-400 text-lg font-semibold w-full text-left py-2 hover:text-indigo-300 transition-colors duration-300"
+        >
+          + Add a Task
         </button>
       )}
 
@@ -100,8 +105,23 @@ const TaskList: React.FC<TaskListProps> = ({
           taskId={selectedTask.taskId!}
           taskTitle={selectedTask.title}
           taskDescription={selectedTask.description || ""}
-          onSaveTitle={(newTitle) => onUpdateTaskTitle(selectedTask.taskId!, newTitle)}
-          onSaveDescription={(newDesc) => onUpdateTaskDescription(selectedTask.taskId!, newDesc)}
+          initialStatus={selectedTask.label}
+          onSaveTitle={(newTitle) => {
+            onUpdateTaskTitle(selectedTask.taskId!, newTitle);
+            setSelectedTask({ ...selectedTask, title: newTitle });
+          }}
+          onSaveDescription={(newDesc) => {
+            onUpdateTaskDescription(selectedTask.taskId!, newDesc);
+            setSelectedTask({ ...selectedTask, description: newDesc });
+          }}
+          onUpdateStatus={(newStatus) => {
+            onUpdateTaskLabel(selectedTask.taskId!, newStatus);
+            setSelectedTask({ ...selectedTask, label: newStatus });
+          }}
+          onDeleteTask={(taskId) => {
+            onDeleteTask?.(taskId);
+            setSelectedTask(null);
+          }}
         />
       )}
     </div>
