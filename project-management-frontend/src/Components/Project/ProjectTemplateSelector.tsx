@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getAllModels, ProjectModel } from '../../services/models-apis';
+import { getAllModels } from '../../services/models-apis';
+import { ProjectModel } from '../../types/ProjectModel';
 
 interface ProjectTemplateSelectorProps {
   onSelect: (modelId: number) => void;
@@ -136,7 +137,7 @@ const ProjectTemplateSelector: React.FC<ProjectTemplateSelectorProps> = ({ onSel
             </div>
             <div className="p-4">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{model.name}</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Template</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{model.description}</p>
             </div>
           </div>
         ))}
