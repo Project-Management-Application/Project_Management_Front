@@ -23,7 +23,8 @@ export interface Sprint {
   title: string;
   backlog: Backlog;
   tasks: Task[];
-  started?: boolean; // Add this new property
+  started?: boolean;
+  completed?: boolean; // Add this new property
 }
 
 export interface Ticket{

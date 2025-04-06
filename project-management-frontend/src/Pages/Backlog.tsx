@@ -32,7 +32,9 @@ const Backlog: React.FC = () => {
               title: sprint.title,
               backlog: { backlogId, tasks: [] },
               tasks: sprintTasks,
-            };
+              started: sprint.started,
+              completed: sprint.completed,
+            } as Sprint;
           })
         );
 
@@ -83,6 +85,8 @@ const Backlog: React.FC = () => {
         backlog: { backlogId: backlog.backlogId!, tasks: [] },
         tasks: [],
         title: "New Sprint",
+        started: false,
+        completed: false,
       };
       setSprints((prev) => [...prev, newSprint]);
       setBacklog((prev) =>

@@ -297,12 +297,14 @@ export const getBacklog = async (projectId: number): Promise<number> => {
   }
 };
 
-export const getSprints = async (backlogId: number): Promise<{ sprintId: number; title: string }[]> => {
+export const getSprints = async (backlogId: number): Promise<{ sprintId: number; title: string; started: boolean; completed: boolean }[]> => {
   try {
     const response = await axios.get(`${API_URL}/api/v1/getSprints/${backlogId}`);
     return response.data.map((s: any) => ({
       sprintId: s.sprintId,
       title: s.title,
+      started: s.started ?? false,
+      completed: s.completed ?? false,
     }));
   } catch (error) {
     throw new Error(`Error fetching sprints for backlog ${backlogId}`);
@@ -337,3 +339,12 @@ export const startSprint = async (sprintId: number): Promise<string> => {
   }
 };
 
+
+export const terminateSprint = async (sprintId: number): Promise<string> => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/terminateSprint/${sprintId}`);
+    return response.data; // Expecting "Sprint terminated successfully"
+  } catch (error) {
+    throw new Error("Error terminating sprint");
+  }
+};
