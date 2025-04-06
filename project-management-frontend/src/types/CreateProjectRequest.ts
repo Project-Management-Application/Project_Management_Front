@@ -1,4 +1,4 @@
-import { ProjectFormData } from "./project";
+import { ProjectFormData } from "./ProjectDetails";
 
 export interface CreateProjectRequest extends ProjectFormData {
   workspaceId: number;

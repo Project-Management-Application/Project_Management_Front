@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
+import { ProjectModel } from "../types/ProjectModel";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,11 +11,6 @@ const api = axios.create({
   },
 });
 
-export interface ProjectModel {
-  id: number;
-  name: string;
-  backgroundImage: string;
-}
 
 export const getAllModels = async (): Promise<ProjectModel[]> => {
   try {
