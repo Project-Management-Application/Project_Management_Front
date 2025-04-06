@@ -11,7 +11,8 @@ import Backlog from './Pages/Backlog';
 import SetupPage from './Pages/SetupPage';
 import Projects from './Components/Dashboard/Projects';
 import Members from './Components/Dashboard/members';
-// Capitalized import
+import ProjectStation from './Components/Project/ProjectStation';
+
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
         <Route path="/Setup" element={<SetupPage />} />
         <Route path="/Dashboard" element={<Dashboard />}>
           <Route path="projects" element={<Projects />} />
-          <Route path="members" element={<Members />} /> {/* Fixed path */}
+          <Route path="members" element={<Members />} /> 
+          <Route path="board/:projectId" element={<ProjectStation />} />
         </Route>
         <Route path="/backlog" element={<Backlog />} />
       </Routes>
