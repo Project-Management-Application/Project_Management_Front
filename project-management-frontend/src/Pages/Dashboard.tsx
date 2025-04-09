@@ -1,6 +1,6 @@
   import React, { useEffect, useRef } from 'react';
   import { useNavigate, Outlet, useLocation } from 'react-router-dom'; // Add useLocation
-  import Header from '../Components/Dashboard/Header';
+  import Header from '../Components/Dashboard/Header/Header';
   import Sidebar from '../Components/Dashboard/SideBar';
 
   function Dashboard() {
@@ -33,7 +33,7 @@
       <div className="flex h-screen flex-col bg-gray-800 dark:bg-gray-800">
         {/* Header - Fixed at the top */}
         <div ref={headerRef} className="fixed inset-x-0 top-0 z-10">
-          <Header />
+          <Header/>
         </div>
 
         {/* Main Layout - Below the Header */}

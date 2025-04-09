@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { authenticate, googleAuthenticate } from "../services/authApi";
 import { checkUserWorkspace } from "../services/Workspace-apis";
 import { AuthenticationRequest } from "../types/auth";
@@ -19,18 +19,24 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from || null;
 
   const checkAndRedirect = async () => {
     try {
       const hasWorkspace = await checkUserWorkspace();
+      console.log("Workspace check result:", hasWorkspace);
       if (hasWorkspace) {
-        navigate("/dashboard/projects");
+        // If there's a 'from' path (e.g., invitation), go there; otherwise, default to dashboard
+        navigate(from || "/dashboard/projects");
       } else {
-        navigate("/setup");
+        // Pass the 'from' state to setup so it can redirect back after completion
+        navigate("/setup", { state: { from } });
       }
     } catch (err) {
       console.error("Error checking workspace:", err);
-      navigate("/setup");
+      navigate("/setup", { state: { from } });
     }
   };
 
@@ -106,7 +112,7 @@ function LoginPage() {
         {/* Left Section - Login Form */}
         <div className="w-1/2 bg-white p-12">
           <h2 className="mb-6 text-4xl font-bold text-gray-900">Welcome Back</h2>
-          
+
           {error && <p className="mb-4 text-red-500">{error}</p>}
 
           <div className="mb-4 flex flex-col gap-4">

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
 import { Button } from 'flowbite-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
@@ -63,18 +63,19 @@ const SetupPage: React.FC = () => {
   const [workspaceId, setWorkspaceId] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); 
+  const from = location.state?.from || '/dashboard'; 
 
-  const particlesInit = async (main: any) => {
-    await loadFull(main);
+  const particlesInit = async (engine: any) => { 
+    await loadFull(engine);
   };
-
   const handleNext = () => {
     if (currentStep === 'welcome') {
       setCurrentStep('workspace');
     } else if (currentStep === 'workspace') {
       setCurrentStep('invite');
     } else if (currentStep === 'invite') {
-      navigate('/dashboard');
+      navigate(from);
     }
   };
 
@@ -87,7 +88,7 @@ const SetupPage: React.FC = () => {
   };
 
   const handleSkip = () => {
-    navigate('/dashboard');
+    navigate(from); // Redirect to 'from' or /dashboard when skipping
   };
 
   const handleWorkspaceCreated = (id: number) => {
