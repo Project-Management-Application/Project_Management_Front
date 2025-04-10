@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { initFlowbite } from 'flowbite';
-import taskifyLogo from '../../../assets/images/taskify-logo.png'
+import taskifyLogo from '../../../assets/images/taskify-logo.png';
 import Toast from '../../UI/Toast';
 import UserMenu from './UserMenu';
 import Notifications from './Notifications';
 import Invitations from './Invitations';
+import WorkspaceList from './WorkspaceList'; // New import
 
 interface ToastMessage {
   id: number;
@@ -22,6 +23,7 @@ const Header: React.FC = () => {
   });
   const [, setIsSidebarOpen] = useState<boolean>(true);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<number>(1); // Default to "My Workspace"
 
   useEffect(() => {
     initFlowbite();
@@ -93,37 +95,11 @@ const Header: React.FC = () => {
               </span>
             </a>
 
-            <form action="#" method="GET" className="pl-2">
-              <label htmlFor="topbar-search" className="sr-only">
-                Search
-              </label>
-              <div className="relative w-96">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <svg
-                    className="size-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  name="search"
-                  id="topbar-search"
-                  className="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-500 dark:focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-9 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400"
-                  placeholder="Search projects"
-                />
-              </div>
-            </form>
+            {/* Replaced search input with WorkspaceList */}
+            <WorkspaceList
+              currentWorkspaceId={currentWorkspaceId}
+              setCurrentWorkspace={setCurrentWorkspaceId}
+            />
           </div>
 
           {/* Right Section */}

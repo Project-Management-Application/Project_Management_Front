@@ -15,7 +15,7 @@ import Backlog from './Pages/Backlog';
 import SetupPage from './Pages/SetupPage';
 import Projects from './Components/Dashboard/Projects';
 import Members from './Components/Dashboard/members';
-import ProjectStation from './Components/Project/ProjectStation';
+import ProjectStation from './Components/Project/Project workstation/ProjectStation';
 
 
 function App() {
