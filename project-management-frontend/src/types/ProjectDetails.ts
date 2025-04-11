@@ -7,6 +7,7 @@ export interface ProjectDetails {
   backgroundColor?: string;
   modelBackgroundImage?: string;
   cards: BackendProjectCard[];
+  workspaceId: number;
 }
 
 export interface BackendProjectCard {

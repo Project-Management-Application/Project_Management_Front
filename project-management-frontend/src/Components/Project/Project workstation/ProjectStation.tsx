@@ -13,8 +13,6 @@ import ProjectHeader from './ProjectHeader';
 import AddCardSection from './card/AddCardSection';
 import { cardColors } from '../../../utils/cardColors';
 
-
-
 const ProjectStation: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -25,6 +23,7 @@ const ProjectStation: React.FC = () => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [projectName, setProjectName] = useState('');
+  const [workspaceId, setWorkspaceId] = useState<number>(0); // Add workspaceId state
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -36,8 +35,8 @@ const ProjectStation: React.FC = () => {
       try {
         const data: ProjectDetails = await getProjectDetails(parseInt(projectId));
         setProjectName(data.name || 'Untitled Project');
+        setWorkspaceId(data.workspaceId); // Set workspaceId from API response
         
-        // Map backend ProjectCard entities to our ProjectCard interface
         const mappedCards: ProjectCard[] = data.cards.map((card: BackendProjectCard, index: number) => ({
           id: card.id,
           name: card.name,
@@ -49,7 +48,6 @@ const ProjectStation: React.FC = () => {
         }));
         setCards(mappedCards);
 
-        // Set background style - adding a very slight blur only to the image
         if (data.backgroundImage) {
           setBackgroundStyle({ 
             background: `url(${data.backgroundImage}) center/cover no-repeat`,
@@ -61,7 +59,7 @@ const ProjectStation: React.FC = () => {
             background: `url(${data.modelBackgroundImage}) center/cover no-repeat`,
           });
         } else {
-          setBackgroundStyle({ backgroundColor: '#1e3a8a' }); // Fallback to match preview
+          setBackgroundStyle({ backgroundColor: '#1e3a8a' });
         }
 
         setLoading(false);
@@ -76,24 +74,19 @@ const ProjectStation: React.FC = () => {
 
   const handleAddCard = async () => {
     if (newCardName.trim() && projectId) {
-      // Create a new card object without an ID
       const newCard: ProjectCard = {
-        id: Date.now(), // We can use a timestamp for temporary purposes but won't rely on it for ID
+        id: Date.now(),
         name: newCardName.trim(),
         tasks: [],
         color: cardColors[cards.length % cardColors.length],
       };
 
-      // Optimistically update the local state
       setCards((prevCards) => [...prevCards, newCard]);
-      setNewCardName(''); // Clear the input field
-      setIsAddingCard(false); // Close the input field
+      setNewCardName('');
+      setIsAddingCard(false);
 
       try {
-        // Call the API to add the new card to the project
-        await addCardToProject(parseInt(projectId), newCardName); // API call
-        
-        // Re-fetch the project details to ensure the UI is consistent
+        await addCardToProject(parseInt(projectId), newCardName);
         const data: ProjectDetails = await getProjectDetails(parseInt(projectId));
         const mappedCards: ProjectCard[] = data.cards.map((card: BackendProjectCard, index: number) => ({
           id: card.id,
@@ -104,10 +97,9 @@ const ProjectStation: React.FC = () => {
           })),
           color: cardColors[index % cardColors.length],
         }));
-        setCards(mappedCards); // Update state with fresh data
+        setCards(mappedCards);
       } catch (error) {
         console.error('Failed to add card:', error);
-        // Optionally show an error message to the user
       }
     }
   };
@@ -146,21 +138,19 @@ const ProjectStation: React.FC = () => {
 
   return (
     <div className="size-full">
-      {/* Project Content Container with relative positioning and proper containment */}
-      <div className="relative size-full overflow-hidden rounded-lg">
-        {/* Background layers */}
-        <div className="absolute inset-0 rounded-lg" style={backgroundStyle}></div>
-        <div className="absolute inset-0 rounded-lg bg-gray-900/40"></div>
+      <div className="relative size-full overflow-hidden">
+        <div className="absolute inset-0" style={backgroundStyle}></div>
+        <div className="absolute inset-0 bg-gray-900/40"></div>
 
-        {/* Project Content with proper z-index */}
         <div className="relative z-[1] flex h-full flex-col rounded-lg">
-          {/* Project Header */}
-          <ProjectHeader projectName={projectName} />
+          <ProjectHeader 
+            projectName={projectName} 
+            projectId={parseInt(projectId!)} // Pass projectId
+            workspaceId={workspaceId}       // Pass workspaceId
+          />
 
-          {/* Cards Container */}
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <div className="flex flex-1 gap-4 overflow-x-auto p-4">
-              {/* Cards */}
               {cards.map((card) => (
                 <CardList 
                   key={card.id} 
@@ -168,8 +158,6 @@ const ProjectStation: React.FC = () => {
                   onDeleteCard={handleDeleteCard} 
                 />
               ))}
-
-              {/* Add Another Card */}
               <AddCardSection 
                 isAddingCard={isAddingCard}
                 setIsAddingCard={setIsAddingCard}
@@ -182,7 +170,6 @@ const ProjectStation: React.FC = () => {
         </div>
       </div>
 
-      {/* Loading overlay when dragging - constrained to the main content area */}
       {isDragging && (
         <div className="pointer-events-none absolute inset-0 z-[2] rounded-lg bg-blue-500/10" />
       )}

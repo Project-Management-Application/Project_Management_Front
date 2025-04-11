@@ -67,3 +67,60 @@ export const addCardToProject = async (
   return newCardId;
 };
 
+export const inviteMemberToProject = async (projectId: number, email: string, role: string): Promise<void> => {
+  try {
+    await api.post(
+      `/api/v1/projects/${projectId}/invite`,
+      { email, role },
+      {
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+      }
+    );
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Error inviting member");
+    }
+    throw new Error("Error inviting member");
+  }
+};
+
+
+export const getPendingProjectInvitations = async (): Promise<{ id: number; projectName: string; role: string; invitedBy: string; expiresAt: string }[]> => {
+  try {
+    const response = await api.get(`/api/v1/projects/invitations/pending`, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Error fetching project invitations");
+    }
+    throw new Error("Error fetching project invitations");
+  }
+};
+
+export const acceptProjectInvitation = async (invitationId: number): Promise<void> => {
+  try {
+    await api.post(`/api/v1/projects/invitations/accept/${invitationId}`, null, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    });
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Error accepting project invitation");
+    }
+    throw new Error("Error accepting project invitation");
+  }
+};
+
+export const declineProjectInvitation = async (invitationId: number): Promise<void> => {
+  try {
+    await api.post(`/api/v1/projects/invitations/reject/${invitationId}`, null, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    });
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Error declining project invitation");
+    }
+    throw new Error("Error declining project invitation");
+  }
+};
