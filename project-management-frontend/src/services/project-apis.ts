@@ -124,3 +124,83 @@ export const declineProjectInvitation = async (invitationId: number): Promise<vo
     throw new Error("Error declining project invitation");
   }
 };
+
+export const addTaskToCard = async (
+  cardId: number,
+  taskName: string
+): Promise<number> => {
+  try {
+    console.log('Adding task:', { cardId, taskName });
+    
+    const response = await api.post(
+      `/api/v1/projects/CreateTask/${cardId}`,
+      { name: taskName },
+      {
+        headers: { 
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Server response:', response.data);
+
+    if (!response.data) {
+      throw new Error('No response data received from server');
+    }
+
+    const newTaskId = response.data?.id;  
+
+    if (!newTaskId) {
+      console.error('Response data:', response.data);
+      throw new Error("No taskId returned from server");
+    }
+
+    return newTaskId;
+  } catch (error: any) {
+    console.error('Full error details:', {
+      error,
+      response: error.response,
+      request: error.request,
+      config: error.config
+    });
+
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error('Axios error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers
+      });
+      throw new Error(`Error creating task: ${errorMessage}`);
+    }
+    
+    throw new Error(`Error creating task: ${error.message}`);
+  }
+};
+
+// New function to move a task from one card to another
+export const moveTask = async (taskId: number, newCardId: number): Promise<void> => {
+  try {
+    await api.patch(
+      `/api/v1/projects/tasks/${taskId}/move`,
+      { cardId: newCardId },
+      {
+        headers: { 
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  } catch (error: any) {
+    console.error('Error moving task:', error);
+    
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(`Error moving task: ${errorMessage}`);
+    }
+    
+    throw new Error(`Error moving task: ${error.message}`);
+  }
+};

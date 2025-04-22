@@ -1,27 +1,57 @@
-// src/components/ProjectStation/TaskItem.tsx
 import React from 'react';
-import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Task } from '../../../../types/Task';
 
 interface TaskItemProps {
   task: Task;
-  provided: DraggableProvided;
-  snapshot: DraggableStateSnapshot;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, provided, snapshot }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 10 : 1,
+  };
+
   return (
     <div
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      className={`group rounded-lg bg-gray-700 p-3 text-white shadow-sm transition-all duration-300 ${
-        snapshot.isDragging
-          ? 'scale-105 shadow-xl ring-2 ring-blue-500'
-          : 'hover:scale-[1.02] hover:shadow-md'
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`group cursor-grab rounded-lg bg-gray-700 p-3 text-white shadow-sm transition-all duration-200 ${
+        isDragging
+          ? 'scale-105 cursor-grabbing shadow-xl ring-2 ring-blue-500'
+          : 'hover:bg-gray-650 hover:scale-[1.02] hover:shadow-md'
       }`}
     >
-      <p className="text-sm font-medium">{task.name}</p>
+      <div className="flex items-center">
+        <div className="mr-2 shrink-0 text-gray-400">
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 6H6V8H8V6Z" fill="currentColor" />
+            <path d="M8 11H6V13H8V11Z" fill="currentColor" />
+            <path d="M8 16H6V18H8V16Z" fill="currentColor" />
+            <path d="M13 6H11V8H13V6Z" fill="currentColor" />
+            <path d="M13 11H11V13H13V11Z" fill="currentColor" />
+            <path d="M13 16H11V18H13V16Z" fill="currentColor" />
+            <path d="M18 6H16V8H18V6Z" fill="currentColor" />
+            <path d="M18 11H16V13H18V11Z" fill="currentColor" />
+            <path d="M18 16H16V18H18V16Z" fill="currentColor" />
+          </svg>
+        </div>
+        <p className="flex-1 text-sm font-medium">{task.name}</p>
+      </div>
       <div className="mt-2 flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
         <button className="rounded p-1 text-xs text-gray-400 hover:bg-gray-600 hover:text-white">
           <svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

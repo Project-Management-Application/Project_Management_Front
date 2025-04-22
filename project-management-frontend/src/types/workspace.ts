@@ -7,3 +7,8 @@ export interface Workspace {
     email: string;
   };
 }
+
+export interface WorkspaceDTO {
+  id: number;
+  name: string;
+}

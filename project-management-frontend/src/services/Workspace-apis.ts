@@ -94,7 +94,7 @@ export const rejectInvitation = async (invitationId: number): Promise<void> => {
 };
 
 
-interface WorkspaceDTO {
+export interface WorkspaceDTO {
   id: number;
   name: string;
 }
@@ -114,6 +114,23 @@ export const getDashboardData = async (): Promise<DashboardData> => {
     throw new Error("Error fetching dashboard data");
   }
 };
+
+
+export const getMyWorkspace = async (): Promise<WorkspaceDTO | null> => {
+  try {
+    const dashboardData = await getDashboardData();
+    return dashboardData.workspace || null;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 404) {
+        return null; // User doesn't have a workspace
+      }
+      throw new Error(error.response.data?.message || "Error fetching my workspace");
+    }
+    throw new Error("Error fetching my workspace");
+  }
+};
+
 
 export const getWorkspaceMembers = async (workspaceId: number): Promise<{ id: number; firstName: string; lastName: string; email: string }[]> => {
   try {
@@ -139,5 +156,19 @@ export const removeMember = async (workspaceId: number, memberId: number): Promi
       throw new Error(error.response.data?.message || "Error removing member");
     }
     throw new Error("Error removing member");
+  }
+};
+
+export const getJoinedWorkspaces = async (): Promise<WorkspaceDTO[]> => {
+  try {
+    const response = await api.get(`/api/v1/workspace/joined-workspaces`, {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Error fetching joined workspaces");
+    }
+    throw new Error("Error fetching joined workspaces");
   }
 };
