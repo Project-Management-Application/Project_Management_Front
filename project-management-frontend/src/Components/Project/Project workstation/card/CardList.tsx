@@ -21,14 +21,16 @@ interface CardListProps {
   members: Member[];
   onDeleteCard: (cardId: number) => void;
   refreshProjectData: () => Promise<void>;
+  isTemporary?: boolean;
 }
 
-const CardList: React.FC<CardListProps> = ({ 
-  card, 
-  projectId, 
-  members, 
-  onDeleteCard, 
-  refreshProjectData 
+const CardList: React.FC<CardListProps> = ({
+  card,
+  projectId,
+  members,
+  onDeleteCard,
+  refreshProjectData,
+  isTemporary = false,
 }) => {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskName, setNewTaskName] = useState('');
@@ -43,26 +45,40 @@ const CardList: React.FC<CardListProps> = ({
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    
+
     if (newTaskName.trim() && !isSubmitting) {
       try {
         setIsSubmitting(true);
-        
+
+        // Generate a temporary ID for the task
+        const tempId = -Date.now();
+
+        // Create a temporary task for immediate UI feedback
         const tempTask = {
-          id: Date.now(),
+          id: tempId,
           name: newTaskName.trim(),
           cardId: card.id,
+          isTemporary: true,
         };
-        
+
+        // Update local state optimistically
         card.tasks.push(tempTask);
         setNewTaskName('');
         setIsAddingTask(false);
-        
+
+        // Make the actual API call
         await addTaskToCard(card.id, newTaskName.trim());
+
+        // Refresh data to get the real task with correct ID
         await refreshProjectData();
       } catch (error) {
         console.error('Error in handleAddTask:', error);
         setError(error instanceof Error ? error.message : 'Failed to add task');
+
+        // Show error for 5 seconds then clear
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
       } finally {
         setIsSubmitting(false);
       }
@@ -82,13 +98,20 @@ const CardList: React.FC<CardListProps> = ({
     } catch (error) {
       console.error(`[CardList] Failed to delete cardId: ${card.id}`, error);
       setError('Failed to delete card. Please try again.');
+
+      // Show error for 5 seconds then clear
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     }
   };
 
   return (
     <div
       ref={setNodeRef}
-      className={`flex w-64 shrink-0 flex-col rounded-xl bg-gray-800/80 shadow-lg transition-all duration-200 ${
+      className={`flex w-64 shrink-0 flex-col rounded-xl ${
+        isTemporary ? 'animate-pulse opacity-90 bg-gray-800/60' : 'bg-gray-800/80'
+      } shadow-lg transition-all duration-200 ${
         isOver ? 'scale-[1.02] bg-gray-700/90 ring-2 ring-blue-400' : ''
       }`}
       style={{
@@ -99,16 +122,17 @@ const CardList: React.FC<CardListProps> = ({
       <CardHeader
         card={card}
         onDeleteCard={() => {
+          if (isTemporary) return; // Prevent deletion of temporary card
           console.log(`[CardList] Delete button clicked for cardId: ${card.id}, showing confirmation`);
           setShowDeleteConfirm(true);
         }}
       />
 
-      <div className={`flex flex-col gap-3 overflow-y-auto p-3 ${
-        isOver ? 'bg-gray-750/70' : ''
-      }`}>
+      <div
+        className={`flex flex-col gap-3 overflow-y-auto p-3 ${isOver ? 'bg-gray-750/70' : ''}`}
+      >
         <SortableContext
-          items={card.tasks.map(task => task.id)}
+          items={card.tasks.map((task) => task.id)}
           strategy={verticalListSortingStrategy}
         >
           {card.tasks && card.tasks.length > 0 ? (
@@ -125,7 +149,13 @@ const CardList: React.FC<CardListProps> = ({
             <EmptyTasksList />
           )}
         </SortableContext>
-        
+
+        {error && (
+          <div className="mb-2 mt-1 rounded bg-red-500/20 p-2 text-xs text-red-200">
+            {error}
+          </div>
+        )}
+
         {isAddingTask ? (
           <form onSubmit={handleAddTask} className="mt-2">
             <input
@@ -136,11 +166,6 @@ const CardList: React.FC<CardListProps> = ({
               className="mb-2 w-full rounded-lg bg-gray-700 p-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
-            {error && (
-              <div className="mb-2 text-sm text-red-400">
-                {error}
-              </div>
-            )}
             <div className="flex justify-end gap-2">
               <button
                 type="button"
@@ -164,8 +189,15 @@ const CardList: React.FC<CardListProps> = ({
           </form>
         ) : (
           <button
-            onClick={() => setIsAddingTask(true)}
-            className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-gray-600 py-2 text-sm text-gray-400 transition-colors hover:border-gray-500 hover:bg-gray-700/50 hover:text-white"
+            onClick={() => {
+              if (isTemporary) return; // Prevent adding tasks to temporary card
+              setIsAddingTask(true);
+            }}
+            className={`mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-gray-600 py-2 text-sm text-gray-400 transition-colors ${
+              isTemporary
+                ? 'cursor-not-allowed opacity-50'
+                : 'hover:border-gray-500 hover:bg-gray-700/50 hover:text-white'
+            }`}
           >
             <Plus className="size-3.5" />
             Add a task

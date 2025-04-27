@@ -7,6 +7,7 @@ interface AddCardSectionProps {
   newCardName: string;
   setNewCardName: (value: string) => void;
   handleAddCard: () => void;
+  isSubmitting?: boolean;
 }
 
 const AddCardSection: React.FC<AddCardSectionProps> = ({
@@ -15,6 +16,7 @@ const AddCardSection: React.FC<AddCardSectionProps> = ({
   newCardName,
   setNewCardName,
   handleAddCard,
+  isSubmitting = false,
 }) => {
   if (isAddingCard) {
     return (
@@ -26,6 +28,7 @@ const AddCardSection: React.FC<AddCardSectionProps> = ({
           onChange={(e) => setNewCardName(e.target.value)}
           className="mb-3 w-full rounded-lg bg-gray-700 p-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           autoFocus
+          disabled={isSubmitting}
         />
         <div className="flex justify-end gap-2">
           <button
@@ -34,17 +37,18 @@ const AddCardSection: React.FC<AddCardSectionProps> = ({
               setNewCardName('');
             }}
             className="flex items-center gap-1 rounded-lg p-2 text-sm text-gray-400 hover:bg-gray-700 hover:text-white"
+            disabled={isSubmitting}
           >
             <X className="size-4" />
             Cancel
           </button>
           <button
             onClick={handleAddCard}
-            disabled={!newCardName.trim()}
+            disabled={!newCardName.trim() || isSubmitting}
             className="flex items-center gap-1 rounded-lg bg-blue-600 p-2 text-sm text-white hover:bg-blue-700 disabled:bg-blue-600/50 disabled:text-white/50"
           >
             <Plus className="size-4" />
-            Add Card
+            {isSubmitting ? 'Adding...' : 'Add Card'}
           </button>
         </div>
       </div>

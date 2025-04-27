@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import axios from "axios";
@@ -52,7 +53,7 @@ export const getProjectDetails = async (projectId: number): Promise<ProjectDetai
 export const addCardToProject = async (
   projectId: number,
   cardName: string
-): Promise<number> => {
+): Promise<void> => {
   const response = await api.post(
     `/api/v1/projects/${projectId}/addCard`,
     { name: cardName },
@@ -61,11 +62,11 @@ export const addCardToProject = async (
     }
   );
 
-  const newCardId = response.data?.cardId;
-  if (!newCardId) throw new Error("No cardId returned from server");
 
-  return newCardId;
+
 };
+
+
 
 export const inviteMemberToProject = async (projectId: number, email: string, role: string): Promise<void> => {
   try {
