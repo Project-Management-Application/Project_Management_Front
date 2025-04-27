@@ -1,4 +1,3 @@
-// components/Toast.tsx
 import React, { useEffect } from 'react';
 
 interface ToastProps {

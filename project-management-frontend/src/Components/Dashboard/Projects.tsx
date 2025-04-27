@@ -168,7 +168,7 @@ const Projects: React.FC = () => {
             <Link
               key={project.id}
               to={`/dashboard/board/${project.id}`}
-              {/* to={`/backlog/${project.id}`}*/}
+              //  to={`/backlog/${project.id}`}
               className="group relative h-40 overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               <div

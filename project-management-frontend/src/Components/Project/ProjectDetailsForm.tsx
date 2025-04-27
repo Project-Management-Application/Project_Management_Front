@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { getBackgroundImages } from '../../services/models-apis';
 import { backgroundOptions } from '../../utils/backgroundColors';
-import { ProjectFormData } from '../../types/ProjectDetails';
 import { getDashboardData } from '../../services/Workspace-apis';
 import { createProject } from '../../services/project-apis';
 import Toast from '../UI/Toast';
+import { ProjectFormData } from '../../types/ProjectFormData';
 
 interface ProjectDetailsFormProps {
   modelId: number | null;

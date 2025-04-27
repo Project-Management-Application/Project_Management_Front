@@ -5,4 +5,5 @@ export interface ProjectCard {
   name: string;
   tasks: Task[]; 
   color: string;
+  isTemporary?: boolean;
 }
