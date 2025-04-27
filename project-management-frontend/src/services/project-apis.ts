@@ -204,3 +204,15 @@ export const moveTask = async (taskId: number, newCardId: number): Promise<void>
     throw new Error(`Error moving task: ${error.message}`);
   }
 };
+
+export const deleteCard = async (cardId: number) => {
+  const response = await api.delete(`/api/v1/projects/deleteCard/${cardId}`);
+  return response.data;
+};
+
+export const getProjectMembers = async (projectId: number) => {
+  console.log(`[ProjectTaskApi] Fetching members for projectId: ${projectId}`);
+  const response = await api.get(`/api/v1/projects/${projectId}/getProjectMembers`);
+  console.log(`[ProjectTaskApi] Successfully fetched members for projectId: ${projectId}`);
+  return response.data;
+};

@@ -1,7 +1,5 @@
-// src/components/ProjectStation/CardHeader.tsx
 import React from 'react';
 import { ProjectCard } from '../../../../types/ProjectCard';
-;
 
 interface CardHeaderProps {
   card: ProjectCard;

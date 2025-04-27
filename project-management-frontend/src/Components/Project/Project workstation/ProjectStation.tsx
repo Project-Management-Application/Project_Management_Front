@@ -14,28 +14,35 @@ import {
   DragOverEvent,
   closestCorners,
 } from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 import CardList from './card/CardList';
-import TaskItem from './card/TaskItem';
 import ProjectHeader from './ProjectHeader';
 import AddCardSection from './card/AddCardSection';
 import { ProjectCard } from '../../../types/ProjectCard';
-import { ProjectDetails, BackendProjectCard } from '../../../types/ProjectDetails';
+import { BackendProjectCard } from '../../../types/ProjectDetails';
 import { Task } from '../../../types/Task';
 import { cardColors } from '../../../utils/cardColors';
 import LoadingOverlay from '../../UI/LoadingOverlay';
-import { addCardToProject, getProjectDetails, moveTask } from '../../../services/project-apis';
+import { addCardToProject, getProjectDetails, moveTask, getProjectMembers } from '../../../services/project-apis';
+
+interface Member {
+  userId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
 
 const ProjectStation: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const [cards, setCards] = useState<ProjectCard[]>([]);
+  const [members, setMembers] = useState<Member[]>([]); // Added members state
   const [backgroundStyle, setBackgroundStyle] = useState<React.CSSProperties>({});
   const [loading, setLoading] = useState(true);
   const [newCardName, setNewCardName] = useState('');
   const [isAddingCard, setIsAddingCard] = useState(false);
-  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
+  const [, setActiveTaskId] = useState<number | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [projectName, setProjectName] = useState('');
   const [workspaceId, setWorkspaceId] = useState<number>(0);
@@ -44,13 +51,11 @@ const ProjectStation: React.FC = () => {
   // Configure the sensors for different input methods
   const sensors = useSensors(
     useSensor(MouseSensor, {
-      // Require the mouse to move by 5px before activating
       activationConstraint: {
         distance: 5,
       },
     }),
     useSensor(TouchSensor, {
-      // Press delay of 250ms, with tolerance of 5px of movement
       activationConstraint: {
         delay: 250,
         tolerance: 5,
@@ -65,38 +70,55 @@ const ProjectStation: React.FC = () => {
     if (!projectId) return;
 
     try {
-      const data: ProjectDetails = await getProjectDetails(parseInt(projectId));
-      
-      setProjectName(data.name || 'Untitled Project');
-      setWorkspaceId(data.workspaceId);
-      
-      const mappedCards: ProjectCard[] = data.cards.map((card: BackendProjectCard, index: number) => ({
+      const [projectData, membersData] = await Promise.all([
+        getProjectDetails(parseInt(projectId)),
+        getProjectMembers(parseInt(projectId)), // Fetch members
+      ]);
+
+      setProjectName(projectData.name || 'Untitled Project');
+      setWorkspaceId(projectData.workspaceId);
+      setMembers(membersData); // Store members
+
+      const mappedCards: ProjectCard[] = projectData.cards.map((card: BackendProjectCard, index: number) => ({
         id: card.id,
         name: card.name,
         tasks: Array.isArray(card.tasks) ? card.tasks.map((backendTask: Task) => ({
           id: backendTask.id,
           name: backendTask.name,
+          cardId: card.id,
+          description: backendTask.description,
+          coverImage: backendTask.coverImage,
+          coverColor: backendTask.coverColor,
+          status: backendTask.status,
+          checklists: backendTask.checklists,
+          labels: backendTask.labels,
+          comments: backendTask.comments,
+          attachments: backendTask.attachments,
+          assignedMemberIds: backendTask.assignedMemberIds,
+          startDate: backendTask.startDate,
+          dueDate: backendTask.dueDate,
+          dueDateReminder: backendTask.dueDateReminder,
         })) : [],
         color: cardColors[index % cardColors.length],
       }));
-      
+
       setCards(mappedCards);
 
-      if (data.backgroundImage) {
+      if (projectData.backgroundImage) {
         setBackgroundStyle({ 
-          background: `url(${data.backgroundImage}) center/cover no-repeat`,
+          background: `url(${projectData.backgroundImage}) center/cover no-repeat`,
         });
-      } else if (data.backgroundColor) {
-        setBackgroundStyle({ backgroundColor: data.backgroundColor });
-      } else if (data.modelBackgroundImage) {
+      } else if (projectData.backgroundColor) {
+        setBackgroundStyle({ backgroundColor: projectData.backgroundColor });
+      } else if (projectData.modelBackgroundImage) {
         setBackgroundStyle({ 
-          background: `url(${data.modelBackgroundImage}) center/cover no-repeat`,
+          background: `url(${projectData.modelBackgroundImage}) center/cover no-repeat`,
         });
       } else {
         setBackgroundStyle({ backgroundColor: '#1e3a8a' });
       }
     } catch (error) {
-      console.error('Failed to fetch project details:', error);
+      console.error('Failed to fetch project details or members:', error);
       navigate('/Dashboard/projects');
     }
   }, [projectId, navigate]);
@@ -141,7 +163,6 @@ const ProjectStation: React.FC = () => {
     setCards(prevCards => prevCards.filter(card => card.id !== cardId));
   };
 
-  // Find a task by its ID across all cards
   const findTaskById = (taskId: number): { task: Task, cardId: number, index: number } | null => {
     for (const card of cards) {
       const taskIndex = card.tasks.findIndex(task => task.id === taskId);
@@ -152,7 +173,6 @@ const ProjectStation: React.FC = () => {
     return null;
   };
 
-  // Handle the start of a drag operation
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const taskId = parseInt(active.id.toString());
@@ -164,7 +184,6 @@ const ProjectStation: React.FC = () => {
     }
   };
 
-  // Handle when a draggable item is moved over a droppable area
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     
@@ -173,7 +192,6 @@ const ProjectStation: React.FC = () => {
     const activeId = active.id;
     const overId = over.id;
     
-    // Skip if not moving over a different card
     if (!overId.toString().includes('card-')) return;
     
     const activeTaskInfo = findTaskById(parseInt(activeId.toString()));
@@ -182,13 +200,9 @@ const ProjectStation: React.FC = () => {
     const activeCardId = activeTaskInfo.cardId;
     const overCardId = parseInt(overId.toString().replace('card-', ''));
     
-    // Skip if dragging over the same card
     if (activeCardId === overCardId) return;
-    
-    // No need to update state here as we'll do it in handleDragEnd
   };
 
-  // Handle when a drag operation completes
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -205,15 +219,11 @@ const ProjectStation: React.FC = () => {
     let destinationCardId: number;
     let destinationIndex: number = 0;
     
-    // Determine if dropping on a card or another task
     if (over.id.toString().includes('card-')) {
       destinationCardId = parseInt(over.id.toString().replace('card-', ''));
-      
-      // If dropping directly on a card, add to the end of the card's tasks
       const destCard = cards.find(card => card.id === destinationCardId);
       destinationIndex = destCard ? destCard.tasks.length : 0;
     } else {
-      // Dropping on another task
       const overTaskId = parseInt(over.id.toString());
       const overTaskInfo = findTaskById(overTaskId);
       
@@ -223,42 +233,28 @@ const ProjectStation: React.FC = () => {
       destinationIndex = overTaskInfo.index;
     }
     
-    // If nothing changed, do nothing
     if (activeTaskInfo.cardId === destinationCardId && activeTaskInfo.index === destinationIndex) {
       return;
     }
     
-    // Create a deep copy of the cards to work with
     const newCards = JSON.parse(JSON.stringify(cards));
     
-    // Remove task from source card
     const sourceCard = newCards.find((card: ProjectCard) => card.id === activeTaskInfo.cardId);
     const [movedTask] = sourceCard.tasks.splice(activeTaskInfo.index, 1);
     
-    // Add task to destination card
     const destCard = newCards.find((card: ProjectCard) => card.id === destinationCardId);
     destCard.tasks.splice(destinationIndex, 0, movedTask);
     
-    // Update UI optimistically
     setCards(newCards);
     setMoveError(null);
     
     try {
-      // Persist changes through API
       await moveTask(activeId, destinationCardId);
-      
-      // Refresh data in background
       refreshProjectData();
     } catch (error) {
       console.error('Error moving task:', error);
-      
-      // Revert UI on error
       setCards(cards);
-      
-      // Show error message
       setMoveError(error instanceof Error ? error.message : 'Failed to move task');
-      
-      // Clear error after 5 seconds
       setTimeout(() => {
         setMoveError(null);
       }, 5000);
@@ -284,7 +280,7 @@ const ProjectStation: React.FC = () => {
 
           <div className="relative">
             {moveError && (
-              <div className="animate-fade-in-out absolute inset-x-0 top-0 z-50 mx-auto max-w-md transform rounded-md bg-red-500 px-4 py-2 text-center text-sm text-white shadow-lg">
+              <div className="animate-fade-in-out absolute inset-x-0 top-0 z-50 mx-auto max-w-md rounded-md bg-red-500 px-4 py-2 text-center text-sm text-white shadow-lg">
                 <div className="flex items-center justify-center">
                   <svg 
                     className="mr-2 size-4" 
@@ -317,6 +313,8 @@ const ProjectStation: React.FC = () => {
                     <CardList 
                       key={card.id} 
                       card={card} 
+                      projectId={parseInt(projectId!)} // Pass projectId
+                      members={members} // Pass members
                       onDeleteCard={handleDeleteCard}
                       refreshProjectData={refreshProjectData}
                     />
@@ -331,10 +329,9 @@ const ProjectStation: React.FC = () => {
                 </div>
               </div>
 
-              {/* Drag overlay provides visual feedback during drag operations */}
               <DragOverlay>
                 {activeTask ? (
-                  <div className="rounded-lg bg-gray-700 p-3 text-white shadow-xl ring-2 ring-blue-500 opacity-80 w-64">
+                  <div className="w-64 rounded-lg bg-gray-700 p-3 text-white opacity-80 shadow-xl ring-2 ring-blue-500">
                     <p className="text-sm font-medium">{activeTask.name}</p>
                   </div>
                 ) : null}

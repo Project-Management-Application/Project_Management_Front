@@ -6,19 +6,35 @@ import CardHeader from './CardHeader';
 import TaskItem from './TaskItem';
 import EmptyTasksList from './EmptyTasksList';
 import { ProjectCard } from '../../../../types/ProjectCard';
-import { addTaskToCard } from '../../../../services/project-apis';
+import { addTaskToCard, deleteCard } from '../../../../services/project-apis';
+
+interface Member {
+  userId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
 
 interface CardListProps {
   card: ProjectCard;
+  projectId: number;
+  members: Member[];
   onDeleteCard: (cardId: number) => void;
   refreshProjectData: () => Promise<void>;
 }
 
-const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectData }) => {
+const CardList: React.FC<CardListProps> = ({ 
+  card, 
+  projectId, 
+  members, 
+  onDeleteCard, 
+  refreshProjectData 
+}) => {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskName, setNewTaskName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { setNodeRef, isOver } = useDroppable({
     id: `card-${card.id}`,
@@ -32,20 +48,17 @@ const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectD
       try {
         setIsSubmitting(true);
         
-        // Optimistically add the task locally
         const tempTask = {
-          id: Date.now(), // Temporary ID
-          name: newTaskName.trim()
+          id: Date.now(),
+          name: newTaskName.trim(),
+          cardId: card.id,
         };
         
         card.tasks.push(tempTask);
         setNewTaskName('');
         setIsAddingTask(false);
         
-        // Make the API call
         await addTaskToCard(card.id, newTaskName.trim());
-        
-        // Refresh the data in the background
         await refreshProjectData();
       } catch (error) {
         console.error('Error in handleAddTask:', error);
@@ -56,18 +69,40 @@ const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectD
     }
   };
 
+  const handleDeleteCard = async () => {
+    console.log(`[CardList] Starting deletion process for cardId: ${card.id}`);
+    try {
+      await deleteCard(card.id);
+      console.log(`[CardList] Successfully called deleteCard API for cardId: ${card.id}`);
+      onDeleteCard(card.id);
+      console.log(`[CardList] Triggered onDeleteCard for cardId: ${card.id}`);
+      await refreshProjectData();
+      console.log(`[CardList] Refreshed project data after deleting cardId: ${card.id}`);
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error(`[CardList] Failed to delete cardId: ${card.id}`, error);
+      setError('Failed to delete card. Please try again.');
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       className={`flex w-64 shrink-0 flex-col rounded-xl bg-gray-800/80 shadow-lg transition-all duration-200 ${
-        isOver ? 'ring-2 ring-blue-400 bg-gray-700/90 scale-[1.02]' : ''
+        isOver ? 'scale-[1.02] bg-gray-700/90 ring-2 ring-blue-400' : ''
       }`}
       style={{
         minHeight: '150px',
         maxHeight: '85vh',
       }}
     >
-      <CardHeader card={card} onDeleteCard={onDeleteCard} />
+      <CardHeader
+        card={card}
+        onDeleteCard={() => {
+          console.log(`[CardList] Delete button clicked for cardId: ${card.id}, showing confirmation`);
+          setShowDeleteConfirm(true);
+        }}
+      />
 
       <div className={`flex flex-col gap-3 overflow-y-auto p-3 ${
         isOver ? 'bg-gray-750/70' : ''
@@ -78,7 +113,13 @@ const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectD
         >
           {card.tasks && card.tasks.length > 0 ? (
             card.tasks.map((task) => (
-              <TaskItem key={task.id} task={task} />
+              <TaskItem
+                key={task.id}
+                task={task}
+                projectId={projectId}
+                members={members}
+                refreshProjectData={refreshProjectData}
+              />
             ))
           ) : (
             <EmptyTasksList />
@@ -92,7 +133,7 @@ const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectD
               value={newTaskName}
               onChange={(e) => setNewTaskName(e.target.value)}
               placeholder="Enter task name..."
-              className="mb-2 w-full rounded-lg bg-gray-700 p-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mb-2 w-full rounded-lg bg-gray-700 p-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
             {error && (
@@ -131,6 +172,37 @@ const CardList: React.FC<CardListProps> = ({ card, onDeleteCard, refreshProjectD
           </button>
         )}
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="rounded-lg bg-slate-800 p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-indigo-200">Delete Card</h3>
+            <p className="mt-2 text-sm text-slate-400">
+              Are you sure you want to delete the card "{card.name}"? This action cannot be undone.
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  console.log(`[CardList] Cancellation of deletion for cardId: ${card.id}`);
+                  setShowDeleteConfirm(false);
+                }}
+                className="rounded px-3 py-1 text-sm text-gray-400 hover:bg-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  console.log(`[CardList] Confirmed deletion for cardId: ${card.id}`);
+                  handleDeleteCard();
+                }}
+                className="rounded bg-rose-500 px-3 py-1 text-sm text-white hover:bg-rose-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
